@@ -19,13 +19,6 @@ const config = {
         orientation: Phaser.Scale.PORTRAIT,
         autoRound: true,
     },
-    // physics: {
-    //     default: 'arcade',
-    //     arcade: {
-    //         gravity: { y: 0 },
-    //         debug: false
-    //     }
-    // },
     input: {
         activePointers: 3 // suporte a multi-touch
     },
