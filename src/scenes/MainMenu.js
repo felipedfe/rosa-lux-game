@@ -8,16 +8,16 @@ export class MainMenu extends Phaser.Scene {
 
         this.add.text(width / 2, height * 0.4, 'Rosa Lux', {
             fontSize: '48px',
-            fontFamily: 'sans-serif',
-            color: '#ffffff',
-            fontStyle: 'bold'
+            fontFamily: 'Georgia, serif',
+            fontStyle: 'italic',
+            color: '#e5e7db',
         }).setOrigin(0.5);
 
         const btnText = this.add.text(width / 2, height * 0.6, 'JOGAR', {
             fontSize: '28px',
             fontFamily: 'sans-serif',
-            color: '#000000',
-            backgroundColor: '#ffffff',
+            color: '#e5e7db',
+            backgroundColor: '#e03420',
             padding: { x: 24, y: 12 }
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 

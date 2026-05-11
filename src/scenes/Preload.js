@@ -6,19 +6,23 @@ export class Preload extends Phaser.Scene {
     preload() {
         const { width, height } = this.scale;
 
-        // barra de loading
-        const barBg = this.add.rectangle(width / 2, height / 2, 300, 12, 0x333333);
-        const bar = this.add.rectangle(width / 2 - 150, height / 2, 0, 12, 0x591006);
+        const barBg = this.add.rectangle(width / 2, height / 2, 300, 12, 0xa8a9ab);
+        const bar = this.add.rectangle(width / 2 - 150, height / 2, 0, 12, 0xe03420);
         bar.setOrigin(0, 0.5);
 
         this.load.on('progress', (progress) => {
             bar.width = 300 * progress;
         });
 
-        // carregue seus assets aqui:
-        // this.load.image('key', 'assets/imagem.png');
-        // this.load.atlas('atlas', 'assets/atlas.png', 'assets/atlas.json');
-        // this.load.audio('som', 'assets/som.mp3');
+        this.load.image('porta',         'assets/porta.webp');
+        this.load.image('cabide-casaco', 'assets/cabide-casaco.webp');
+        this.load.image('bolso',         'assets/bolso.webp');
+        this.load.image('folha-casaco',  'assets/folha-casaco.webp');
+        this.load.image('mesa',          'assets/mesa.webp');
+        this.load.image('maquina',       'assets/maquina.webp');
+        this.load.image('folha-maquina', 'assets/folha-maquina.webp');
+        this.load.image('estante',       'assets/estante.webp');
+        this.load.image('seta',          'assets/seta-2.png');
     }
 
     create() {

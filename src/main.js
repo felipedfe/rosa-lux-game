@@ -10,7 +10,7 @@ const GAME_HEIGHT = 960;
 const config = {
     type: Phaser.AUTO,
     parent: 'game-container',
-    backgroundColor: '#591006',
+    backgroundColor: '#a8a9ab',
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
     scale: {
