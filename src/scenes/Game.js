@@ -22,7 +22,6 @@ export class Game extends Phaser.Scene {
         this.state = {
             typewriterRead: false,
             pocketOpen: false,
-            ticketRead: false,
         };
 
         this.currentRoom = 1;
@@ -47,29 +46,32 @@ export class Game extends Phaser.Scene {
         // ── Sala 0 — Porta + Casaco ──────────────────────────
         this.add.image(R0 + cx + 80, 500, 'porta').setOrigin(0.5).setScale(0.7);
 
-        // container do cabide — mova só este para reposicionar tudo junto
+        // container do cabide
         this.cabide = this.add.image(0, 0, 'cabide-casaco')
             .setOrigin(0.5)
             .setScale(0.8)
             .setInteractive();
         this.cabide.on('pointerdown', () => this.onCasacoTap());
 
-        this.bolso = this.add.image(-15, 150, 'bolso')
+        this.bolso = this.add.image(0, 0, 'bolso')
             .setOrigin(0.5)
-            .setScale(0.5)
             .setAlpha(0)
             .setVisible(false);
 
-        this.folhaCasaco = this.add.image(-15, 170, 'folha-casaco')
+        this.folhaCasaco = this.add.image(0, -120, 'folha-casaco')
             .setOrigin(0.5)
-            .setScale(0.4)
             .setAlpha(0)
             .setVisible(false);
+
+        // subcontainer do bolso -> bolso + bilhete juntos
+        this.bolsoGroup = this.add.container(15, 120, [
+            this.folhaCasaco,
+            this.bolso,
+        ]).setScale(0.3);
 
         this.casacoGroup = this.add.container(R0 + cx - 160, 580, [
             this.cabide,
-            this.bolso,
-            this.folhaCasaco,
+            this.bolsoGroup,
         ]);
 
         // ── Sala 1 — Mesa + Máquina ──────────────────────────
@@ -88,12 +90,24 @@ export class Game extends Phaser.Scene {
         this.maquina.on('pointerdown', () => this.onMaquinaTap());
 
         // ── Sala 2 — Estante ─────────────────────────────────
-        this.add.image(R2 + cx, 480, 'estante').setOrigin(0.5)
-            .setScale(0.7);
+        this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.7);
+
+        this.livros = this.add.image(100, -180, 'livros')
+            .setOrigin(0.5)
+            .setScale(0.5)
+            .setInteractive();
+        this.livros.on('pointerdown', () => this.onLivrosTap());
+
+        // container estante + livro
+        this.estanteGroup = this.add.container(R2 + cx + 50, 480, [
+            this.estante,
+            this.livros,
+        ]);
 
         if (DEBUG) {
             this.input.enableDebug(this.maquina);
             this.input.enableDebug(this.cabide);
+            this.input.enableDebug(this.livros);
         }
     }
 
@@ -155,17 +169,23 @@ export class Game extends Phaser.Scene {
         this.state.typewriterRead = true;
 
         this.tweens.add({
-            targets: this.folhaMaquina,
-            y: '-=120',
+            targets:  this.folhaMaquina,
+            y:        '-=120',
             duration: 800,
-            ease: 'Back.Out',
+            ease:     'Back.Out',
             onComplete: () => {
-                this.showPopup(
-                    '"Mesmo aqui, continuo\nouvindo os pássaros."',
-                    'Se for sair, leve um casaco.'
-                );
+                this.folhaMaquina.setInteractive();
+                this.folhaMaquina.on('pointerdown', () => this.onFolhaMaquinaTap());
+                if (DEBUG) this.input.enableDebug(this.folhaMaquina);
             }
         });
+    }
+
+    onFolhaMaquinaTap() {
+        this.showPopup(
+            '"Mesmo aqui, continuo\nouvindo os pássaros."',
+            'Se for sair, leve um casaco.'
+        );
     }
 
     onCasacoTap() {
@@ -197,12 +217,16 @@ export class Game extends Phaser.Scene {
     }
 
     onBilheteTap() {
-        if (this.state.ticketRead) return;
-        this.state.ticketRead = true;
-
         this.showPopup(
             '"Liberdade é sempre a liberdade\nde quem pensa diferente."',
             'meu maior legado foram os pensamentos que deixei'
+        );
+    }
+
+    onLivrosTap() {
+        this.showPopup(
+            '"Às vezes penso que o mundo\nperdeu a delicadeza."',
+            'colocar dica'
         );
     }
 
@@ -237,8 +261,8 @@ export class Game extends Phaser.Scene {
             wordWrap: { width: width - 120 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
-        this.popupClose = this.add.text(cx, cy + 145, '[ fechar ]', {
-            fontSize: '14px',
+        this.popupClose = this.add.text(width - 60, cy - 140, '✕', {
+            fontSize: '24px',
             fontFamily: 'sans-serif',
             color: '#a8a9ab',
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12)
