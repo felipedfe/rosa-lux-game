@@ -22,6 +22,7 @@ export class Game extends Phaser.Scene {
         this.state = {
             typewriterRead: false,
             pocketOpen: false,
+            step: 0, // 0=início 1=casaco 2=livros 3=vaso 4=fim
         };
 
         this.currentRoom = 1;
@@ -76,7 +77,7 @@ export class Game extends Phaser.Scene {
         this.casacoGroup = this.add.container(R0 + cx - 160, 580, [
             this.casaco,
             this.bolsoGroup,
-        ]);
+        ]).setVisible(false); // revelado após ler o papel da máquina
 
         // ── Sala 1 — Mesa + Máquina ──────────────────────────
         this.add.image(R1 + cx, 780, 'mesa').setOrigin(0.5);
@@ -96,8 +97,10 @@ export class Game extends Phaser.Scene {
         this.vaso = this.add.image(250, 0, 'vaso')
             .setOrigin(0.5)
             .setScale(0.6)
+            .setVisible(false) // revelado após ler os livros
             .setInteractive(new Phaser.Geom.Rectangle(30, 0, 200, 350), Phaser.Geom.Rectangle.Contains);
         //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (286×350)
+        this.vaso.on('pointerdown', () => this.onVasoTap());
 
         // container — ajuste setScale para redimensionar folha + máquina juntas
         this.maquinaGroup = this.add.container((R1 + cx) - 50, 520, [
@@ -114,6 +117,7 @@ export class Game extends Phaser.Scene {
         this.livros = this.add.image(100, -180, 'livros')
             .setOrigin(0.5)
             .setScale(0.5)
+            .setVisible(false) // revelado após ler o bilhete do casaco
             .setInteractive();
         this.livros.on('pointerdown', () => this.onLivrosTap());
 
@@ -206,6 +210,7 @@ export class Game extends Phaser.Scene {
             '"Mesmo aqui, continuo\nouvindo os pássaros."',
             'Se for sair, leve um casaco.'
         );
+        this.unlockCasaco();
     }
 
     onCasacoTap() {
@@ -241,6 +246,7 @@ export class Game extends Phaser.Scene {
             '"Liberdade é sempre a liberdade\nde quem pensa diferente."',
             'meu maior legado foram os pensamentos que deixei'
         );
+        this.unlockLivros();
     }
 
     onLivrosTap() {
@@ -248,6 +254,39 @@ export class Game extends Phaser.Scene {
             '"Às vezes penso que o mundo\nperdeu a delicadeza."',
             'colocar dica'
         );
+        this.unlockVaso();
+    }
+
+    onVasoTap() {
+        if (this.state.step < 3) return;
+        this.state.step = 4;
+        this.showPopup(
+            'TODO: frase final',
+            'TODO: mensagem de encerramento'
+        );
+    }
+
+    // ─── Unlocks ──────────────────────────────────────────────
+
+    unlockCasaco() {
+        if (this.state.step > 0) return;
+        this.state.step = 1;
+        this.casacoGroup.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.casacoGroup, alpha: 1, duration: 600 });
+    }
+
+    unlockLivros() {
+        if (this.state.step > 1) return;
+        this.state.step = 2;
+        this.livros.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.livros, alpha: 1, duration: 600 });
+    }
+
+    unlockVaso() {
+        if (this.state.step > 2) return;
+        this.state.step = 3;
+        this.vaso.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.vaso, alpha: 1, duration: 600 });
     }
 
     // ─── Popup ────────────────────────────────────────────────
