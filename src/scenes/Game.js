@@ -29,6 +29,7 @@ export class Game extends Phaser.Scene {
 
         this.createRooms();
         this.createNavArrows();
+        this.createSwipeInput();
         this.createPopupLayer();
 
         // começa na sala central (Mesa + Máquina)
@@ -180,6 +181,21 @@ export class Game extends Phaser.Scene {
     updateArrows() {
         this.arrowLeft.setVisible(this.currentRoom > 0);
         this.arrowRight.setVisible(this.currentRoom < 2);
+    }
+
+    // ─── Swipe ────────────────────────────────────────────────
+
+    createSwipeInput() {
+        let startX = 0;
+
+        this.input.on('pointerdown', (p) => { startX = p.x; });
+
+        this.input.on('pointerup', (p) => {
+            if (this.popupOverlay.visible) return; // ignora swipe com popup aberto
+            const dist = startX - p.x;
+            if (Math.abs(dist) < 60) return;       // ignora taps
+            this.navigateTo(dist > 0 ? this.currentRoom + 1 : this.currentRoom - 1);
+        });
     }
 
     // ─── Interações ───────────────────────────────────────────
