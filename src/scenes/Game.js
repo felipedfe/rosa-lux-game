@@ -53,7 +53,8 @@ export class Game extends Phaser.Scene {
         this.casaco = this.add.image(0, 0, 'casaco')
             .setOrigin(0.5)
             .setScale(0.8)
-            .setInteractive();
+            .setInteractive(new Phaser.Geom.Rectangle(0, 0, 210, 790), Phaser.Geom.Rectangle.Contains);
+        //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (265×790)
         this.casaco.on('pointerdown', () => this.onCasacoTap());
 
         this.bolso = this.add.image(0, 0, 'bolso')
@@ -80,17 +81,32 @@ export class Game extends Phaser.Scene {
         // ── Sala 1 — Mesa + Máquina ──────────────────────────
         this.add.image(R1 + cx, 780, 'mesa').setOrigin(0.5);
 
-        this.folhaMaquina = this.add.image(R1 + cx, 440, 'folha-maquina')
+        // folhaMaquina antes da maquina no array = fica atrás
+        this.folhaMaquina = this.add.image(0, -80, 'folha-maquina')
             .setOrigin(0.5)
-            .setScale(0.7)
-            .setDepth(1);
+            .setScale(0.7);
 
-        this.maquina = this.add.image(R1 + cx, 520, 'maquina')
+        this.maquina = this.add.image(0, 0, 'maquina')
             .setOrigin(0.5)
             .setScale(0.85)
-            .setDepth(2)
-            .setInteractive();
+            .setInteractive(new Phaser.Geom.Rectangle(25, 25, 350, 230), Phaser.Geom.Rectangle.Contains);
+        //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (400×292)
         this.maquina.on('pointerdown', () => this.onMaquinaTap());
+
+        this.vaso = this.add.image(250, 0, 'vaso')
+            .setOrigin(0.5)
+            .setScale(0.6)
+            .setInteractive(new Phaser.Geom.Rectangle(30, 0, 200, 350), Phaser.Geom.Rectangle.Contains);
+        //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (286×350)
+
+        // container — ajuste setScale para redimensionar folha + máquina juntas
+        this.maquinaGroup = this.add.container((R1 + cx) - 50, 520, [
+            this.folhaMaquina,
+            this.maquina,
+            this.vaso,
+        ]);
+        this.maquinaGroup.setScale(0.9);
+
 
         // ── Sala 2 — Estante ─────────────────────────────────
         this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.7);
@@ -111,6 +127,7 @@ export class Game extends Phaser.Scene {
             this.input.enableDebug(this.maquina);
             this.input.enableDebug(this.casaco);
             this.input.enableDebug(this.livros);
+            this.input.enableDebug(this.vaso);
         }
     }
 
