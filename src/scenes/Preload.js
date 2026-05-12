@@ -15,7 +15,8 @@ export class Preload extends Phaser.Scene {
         });
 
         this.load.image('porta',         'assets/porta.webp');
-        this.load.image('cabide-casaco', 'assets/cabide-casaco.webp');
+        this.load.image('casaco',        'assets/casaco.webp');
+        this.load.image('cabideiro',     'assets/cabideiro.webp');
         this.load.image('bolso',         'assets/bolso.webp');
         this.load.image('folha-casaco',  'assets/folha-casaco.webp');
         this.load.image('mesa',          'assets/mesa.webp');
@@ -24,6 +25,8 @@ export class Preload extends Phaser.Scene {
         this.load.image('estante',       'assets/estante.webp');
         this.load.image('livros',        'assets/livros.webp');
         this.load.image('seta',          'assets/seta-2.png');
+        this.load.image('rosa-ilustra',  'assets/rosa-ilustra.png');
+        this.load.image('balao',         'assets/balao.png');
     }
 
     create() {

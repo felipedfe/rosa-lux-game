@@ -46,12 +46,15 @@ export class Game extends Phaser.Scene {
         // ── Sala 0 — Porta + Casaco ──────────────────────────
         this.add.image(R0 + cx + 80, 500, 'porta').setOrigin(0.5).setScale(0.7);
 
-        // container do cabide
-        this.cabide = this.add.image(0, 0, 'cabide-casaco')
+        // cabideiro — criado antes do casacoGroup para ficar atrás
+        this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
+
+        // container do casaco
+        this.casaco = this.add.image(0, 0, 'casaco')
             .setOrigin(0.5)
             .setScale(0.8)
             .setInteractive();
-        this.cabide.on('pointerdown', () => this.onCasacoTap());
+        this.casaco.on('pointerdown', () => this.onCasacoTap());
 
         this.bolso = this.add.image(0, 0, 'bolso')
             .setOrigin(0.5)
@@ -64,13 +67,13 @@ export class Game extends Phaser.Scene {
             .setVisible(false);
 
         // subcontainer do bolso -> bolso + bilhete juntos
-        this.bolsoGroup = this.add.container(15, 120, [
+        this.bolsoGroup = this.add.container(15, 200, [
             this.folhaCasaco,
             this.bolso,
         ]).setScale(0.3);
 
         this.casacoGroup = this.add.container(R0 + cx - 160, 580, [
-            this.cabide,
+            this.casaco,
             this.bolsoGroup,
         ]);
 
@@ -106,7 +109,7 @@ export class Game extends Phaser.Scene {
 
         if (DEBUG) {
             this.input.enableDebug(this.maquina);
-            this.input.enableDebug(this.cabide);
+            this.input.enableDebug(this.casaco);
             this.input.enableDebug(this.livros);
         }
     }
