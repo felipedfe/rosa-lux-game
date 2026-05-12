@@ -186,14 +186,16 @@ export class Game extends Phaser.Scene {
     // ─── Swipe ────────────────────────────────────────────────
 
     createSwipeInput() {
-        let startX = 0;
+        let startX = null;
 
         this.input.on('pointerdown', (p) => { startX = p.x; });
 
         this.input.on('pointerup', (p) => {
-            if (this.popupOverlay.visible) return; // ignora swipe com popup aberto
+            if (startX === null) return;            // pointerup sem pointerdown nesta cena
+            if (this.popupOverlay.visible) return;  // ignora swipe com popup aberto
             const dist = startX - p.x;
-            if (Math.abs(dist) < 60) return;       // ignora taps
+            startX = null;
+            if (Math.abs(dist) < 60) return;        // ignora taps
             this.navigateTo(dist > 0 ? this.currentRoom + 1 : this.currentRoom - 1);
         });
     }
