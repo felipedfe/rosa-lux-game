@@ -1,6 +1,6 @@
 # Rosa Lux — Mini Escape Room
 
-A mobile-first interactive mini escape room built for the **Rosa Luxemburg Foundation** (Fundação Rosa Luxemburgo). The game works as a narrative experience disguised as a puzzle. Players explore three connected rooms, interact with objects, and uncover quotes and clues tied to Rosa Luxemburg's legacy.
+A mobile-first interactive mini escape room built for the **Rosa Luxemburg Foundation** (Fundação Rosa Luxemburgo - https://rosalux.org.br/). The game works as a narrative experience disguised as a puzzle. Players explore three connected rooms, interact with objects, and uncover quotes and clues tied to Rosa Luxemburg's legacy.
 
 <!-- screenshot or cover image here -->
 
@@ -42,12 +42,3 @@ rosa-lux/
 ├── vite.config.js
 └── package.json
 ```
-
-## Game flow
-
-1. Player starts at the **writing desk** (center room)
-2. Taps the **typewriter** → paper rises → reveals a quote and a clue
-3. Navigates to the **coat room** (left) → interacts with the coat → pocket opens → ticket appears
-4. Taps the **ticket** → reveals a quote → bookshelf unlocks
-5. Navigates to the **bookshelf** (right) → taps the books → final clue → vase unlocks
-6. Back to the desk → taps the **vase** → end
