@@ -22,6 +22,7 @@ export class Game extends Phaser.Scene {
         this.state = {
             typewriterRead: false,
             pocketOpen: false,
+            chaveObtida: false,
         };
 
         this.currentRoom = 1;
@@ -45,7 +46,9 @@ export class Game extends Phaser.Scene {
         const cx = ROOM_WIDTH / 2; // centro local de cada sala
 
         // ── Sala 0 — Porta + Casaco ──────────────────────────
-        this.add.image(R0 + cx + 80, 500, 'porta').setOrigin(0.5).setScale(0.7);
+        this.porta = this.add.image(R0 + cx + 80, 500, 'porta')
+            .setOrigin(0.5)
+            .setScale(0.7);
 
         // cabideiro — criado antes do casacoGroup para ficar atrás
         this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
@@ -94,16 +97,24 @@ export class Game extends Phaser.Scene {
         //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (400×292)
         this.maquina.on('pointerdown', () => this.onMaquinaTap());
 
+        // chave — criada antes do vaso para ficar atrás, começa invisível
+        this.chave = this.add.image(250, 60, 'chave')
+            .setOrigin(0.5)
+            .setScale(0.5)
+            .setVisible(false);
+
         this.vaso = this.add.image(250, 0, 'vaso')
             .setOrigin(0.5)
             .setScale(0.6)
             .setInteractive(new Phaser.Geom.Rectangle(30, 0, 200, 350), Phaser.Geom.Rectangle.Contains);
         //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (286×350)
+        this.vaso.on('pointerdown', () => this.onVasoTap());
 
         // container — ajuste setScale para redimensionar folha + máquina juntas
         this.maquinaGroup = this.add.container((R1 + cx) - 50, 520, [
             this.folhaMaquina,
             this.maquina,
+            this.chave,
             this.vaso,
         ]);
         this.maquinaGroup.setScale(0.9);
@@ -129,6 +140,7 @@ export class Game extends Phaser.Scene {
             this.input.enableDebug(this.casaco);
             this.input.enableDebug(this.livros);
             this.input.enableDebug(this.vaso);
+            this.input.enableDebug(this.porta);
         }
     }
 
@@ -280,6 +292,57 @@ export class Game extends Phaser.Scene {
             '"Às vezes penso que o mundo\nperdeu a delicadeza."',
             'colocar dica'
         );
+    }
+
+    onVasoTap() {
+        if (this.state.chaveObtida) return;
+
+        // vaso sobe para revelar a chave
+        this.tweens.add({
+            targets:  this.vaso,
+            y:        '-=100',
+            duration: 400,
+            ease:     'Power2',
+            onComplete: () => {
+                // chave aparece
+                this.chave.setVisible(true).setAlpha(0);
+                this.tweens.add({
+                    targets:  this.chave,
+                    alpha:    1,
+                    duration: 400,
+                    onComplete: () => {
+                        this.chave
+                            .setInteractive(new Phaser.Geom.Rectangle(0, 0, 300, 122), Phaser.Geom.Rectangle.Contains);
+                        //  Rectangle — coords na imagem bruta (300×122)
+                        this.chave.on('pointerdown', () => this.onChaveTap());
+                        if (DEBUG) this.input.enableDebug(this.chave);
+                    }
+                });
+            }
+        });
+    }
+
+    onChaveTap() {
+        if (this.state.chaveObtida) return;
+        this.state.chaveObtida = true;
+
+        this.chave.disableInteractive();
+        this.tweens.add({ targets: this.chave, alpha: 0, duration: 300,
+            onComplete: () => this.chave.setVisible(false)
+        });
+
+        this.showPopup('Você encontrou a chave!', 'Volte até a porta.');
+
+        // porta fica interativa
+        this.porta
+            .setInteractive(new Phaser.Geom.Rectangle(0, 0, this.porta.width, this.porta.height), Phaser.Geom.Rectangle.Contains)
+            .on('pointerdown', () => this.onPortaTap());
+    }
+
+    onPortaTap() {
+        if (!this.state.chaveObtida) return;
+
+        this.porta.setTexture('porta-aberta').disableInteractive();
     }
 
     // ─── Popup ────────────────────────────────────────────────
