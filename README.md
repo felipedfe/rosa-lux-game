@@ -1,75 +1,53 @@
-# Jogo Rosa Lux
+# Rosa Lux — Mini Escape Room
 
-Jogo mobile em Phaser 3 com Vite, orientação portrait.
+A mobile-first interactive mini escape room built for the **Rosa Luxemburg Foundation** (Fundação Rosa Luxemburgo). The game works as a narrative experience disguised as a puzzle. Players explore three connected rooms, interact with objects, and uncover quotes and clues tied to Rosa Luxemburg's legacy.
 
-## Requisitos
+<!-- screenshot or cover image here -->
 
-- [Node.js](https://nodejs.org/) v16+ (recomendado v18+)
-- npm (já vem com o Node)
+## Tech stack
 
-## Instalação
+- [Phaser 3](https://phaser.io/) — game framework
+- [Vite 5](https://vitejs.dev/) — dev server and bundler
+- Vanilla JavaScript
+
+## Getting started
 
 ```bash
 npm install
-```
-
-## Desenvolvimento
-
-```bash
 npm run dev
 ```
 
-Abre em `http://localhost:5173`.
+Opens at `http://localhost:5173`.
 
-Para testar no celular físico na mesma rede Wi-Fi, acesse o IP local exibido no terminal (ex: `http://192.168.x.x:5173`).
-
-## Build para produção
+## Build
 
 ```bash
 npm run build
 ```
 
-Gera a pasta `dist/` pronta para deploy.
+Outputs to `dist/`, ready for static hosting.
 
-## Estrutura do projeto
+## Project structure
 
 ```
-jogo-rosa-lux/
-├── public/
-│   └── assets/          # imagens, áudios, spritesheets
+rosa-lux/
+├── public/assets/       # images and other static assets
 ├── src/
-│   ├── main.js          # config do Phaser + lista de cenas
+│   ├── main.js          # Phaser config and scene list
 │   └── scenes/
-│       ├── Boot.js      # cena inicial (carrega assets de loading)
-│       ├── Preload.js   # carrega todos os assets do jogo
-│       ├── MainMenu.js  # tela de menu
-│       └── Game.js      # cena principal do jogo
+│       ├── Preload.js   # loads all assets
+│       ├── MainMenu.js  # intro screen with character and speech bubble
+│       └── Game.js      # escape room — rooms, interactions, popups
 ├── index.html
 ├── vite.config.js
 └── package.json
 ```
 
-## Resolução base
+## Game flow
 
-O jogo usa `390 × 844` px (proporção iPhone 14) com `Phaser.Scale.FIT` — se adapta automaticamente a qualquer tamanho de tela mantendo a proporção.
-
-## Adicionando assets
-
-Coloque arquivos em `public/assets/` e carregue na cena `Preload`:
-
-```js
-// imagem
-this.load.image('player', 'assets/player.png');
-
-// spritesheet
-this.load.spritesheet('run', 'assets/run.png', { frameWidth: 64, frameHeight: 64 });
-
-// áudio
-this.load.audio('bgm', 'assets/bgm.mp3');
-```
-
-## Adicionando cenas
-
-1. Crie `src/scenes/NovaCena.js` exportando uma classe que estende `Phaser.Scene`
-2. Importe e adicione ao array `scene` em `src/main.js`
-3. Navegue com `this.scene.start('NovaCena')`
+1. Player starts at the **writing desk** (center room)
+2. Taps the **typewriter** → paper rises → reveals a quote and a clue
+3. Navigates to the **coat room** (left) → interacts with the coat → pocket opens → ticket appears
+4. Taps the **ticket** → reveals a quote → bookshelf unlocks
+5. Navigates to the **bookshelf** (right) → taps the books → final clue → vase unlocks
+6. Back to the desk → taps the **vase** → end

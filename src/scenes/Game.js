@@ -144,7 +144,11 @@ export class Game extends Phaser.Scene {
             .setFlipX(true)
             .setScrollFactor(0)
             .setDepth(5)
-            .setInteractive()
+            .setInteractive(
+                new Phaser.Geom.Rectangle(-70, -100, 300, 350),
+                Phaser.Geom.Rectangle.Contains
+                //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (200×154)
+            )
             .on('pointerdown', () => this.navigateTo(this.currentRoom - 1));
 
         this.arrowRight = this.add.image(width - 30, y, 'seta')
@@ -152,10 +156,19 @@ export class Game extends Phaser.Scene {
             .setScale(0.15)
             .setScrollFactor(0)
             .setDepth(5)
-            .setInteractive()
+            .setInteractive(
+                new Phaser.Geom.Rectangle(0, -100, 280, 350),
+                Phaser.Geom.Rectangle.Contains
+                //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (200×154)
+            )
             .on('pointerdown', () => this.navigateTo(this.currentRoom + 1));
 
         this.updateArrows();
+
+        if (DEBUG) {
+            this.input.enableDebug(this.arrowLeft);
+            this.input.enableDebug(this.arrowRight);
+        }
     }
 
     navigateTo(room) {
@@ -207,10 +220,10 @@ export class Game extends Phaser.Scene {
         this.state.typewriterRead = true;
 
         this.tweens.add({
-            targets:  this.folhaMaquina,
-            y:        '-=120',
+            targets: this.folhaMaquina,
+            y: '-=120',
             duration: 800,
-            ease:     'Back.Out',
+            ease: 'Back.Out',
             onComplete: () => {
                 this.folhaMaquina.setInteractive();
                 this.folhaMaquina.on('pointerdown', () => this.onFolhaMaquinaTap());
@@ -304,8 +317,13 @@ export class Game extends Phaser.Scene {
             fontFamily: 'sans-serif',
             color: '#a8a9ab',
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12)
-            .setInteractive()
+        this.popupClose.setInteractive(
+            new Phaser.Geom.Rectangle(-15, -15, 50, 50),
+            Phaser.Geom.Rectangle.Contains
+        )
             .on('pointerdown', () => this.hidePopup());
+
+        if (DEBUG) this.input.enableDebug(this.popupClose);
     }
 
     showPopup(quote, instruction = null) {
