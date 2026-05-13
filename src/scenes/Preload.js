@@ -28,6 +28,7 @@ export class Preload extends Phaser.Scene {
         this.load.image('seta',          'assets/seta-2.png');
         this.load.image('rosa-ilustra',  'assets/rosa-ilustra.png');
         this.load.image('balao',         'assets/balao.png');
+        this.load.audio('maquina-plim',  'assets/audio/maquina-plim.m4a');
     }
 
     create() {

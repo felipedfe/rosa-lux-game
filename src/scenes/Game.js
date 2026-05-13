@@ -218,6 +218,7 @@ export class Game extends Phaser.Scene {
     onMaquinaTap() {
         if (this.state.typewriterRead) return;
         this.state.typewriterRead = true;
+        this.sound.play('maquina-plim')
 
         this.tweens.add({
             targets: this.folhaMaquina,
