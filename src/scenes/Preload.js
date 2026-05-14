@@ -30,6 +30,7 @@ export class Preload extends Phaser.Scene {
         this.load.image('balao',         'assets/balao.png');
         this.load.image('chave',         'assets/chave.webp');
         this.load.image('porta-aberta',  'assets/porta-aberta.png');
+        this.load.image('logo',          'assets/logo.webp');
         this.load.audio('maquina-plim',  'assets/audio/maquina-plim.m4a');
     }
 

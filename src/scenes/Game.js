@@ -32,6 +32,7 @@ export class Game extends Phaser.Scene {
         this.createNavArrows();
         this.createSwipeInput();
         this.createPopupLayer();
+        this.createEndScreen();
 
         // começa na sala central (Mesa + Máquina)
         this.cameras.main.setScroll(ROOM_WIDTH, 0);
@@ -50,7 +51,7 @@ export class Game extends Phaser.Scene {
             .setOrigin(0.5)
             .setScale(0.7);
 
-        // cabideiro — criado antes do casacoGroup para ficar atrás
+        // cabideiro
         this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
 
         // container do casaco
@@ -100,7 +101,7 @@ export class Game extends Phaser.Scene {
         // chave — criada antes do vaso para ficar atrás, começa invisível
         this.chave = this.add.image(250, 60, 'chave')
             .setOrigin(0.5)
-            .setScale(0.5)
+            .setScale(0.4)
             .setVisible(false);
 
         this.vaso = this.add.image(250, 0, 'vaso')
@@ -300,7 +301,7 @@ export class Game extends Phaser.Scene {
         // vaso sobe para revelar a chave
         this.tweens.add({
             targets:  this.vaso,
-            y:        '-=100',
+            y:        -100,
             duration: 400,
             ease:     'Power2',
             onComplete: () => {
@@ -343,6 +344,68 @@ export class Game extends Phaser.Scene {
         if (!this.state.chaveObtida) return;
 
         this.porta.setTexture('porta-aberta').disableInteractive();
+
+        // pan até a porta, depois zoom
+        this.cameras.main.pan(this.porta.x, this.porta.y, 900, 'Power2', false, (_cam, progress) => {
+            if (progress !== 1) return;
+            this.cameras.main.zoomTo(3, 2500, 'Power3', false, (_cam2, p2) => {
+                if (p2 >= 0.7) this.showEndScreen();
+            });
+        });
+    }
+
+    // ─── Tela final ───────────────────────────────────────────
+
+    createEndScreen() {
+        const { width, height } = this.scale;
+        const cx = width / 2;
+        const cy = height / 2;
+
+        this.endOverlay = this.add.rectangle(cx, cy, width, height, 0x000000, 1)
+            .setScrollFactor(0).setVisible(false).setDepth(20);
+
+        this.endLogo = this.add.image(cx, cy - 60, 'logo')
+            .setOrigin(0.5)
+            .setScrollFactor(0).setVisible(false).setDepth(21);
+
+        this.endBtn = this.add.text(cx, cy + 160, 'JOGAR NOVAMENTE', {
+            fontSize: '22px',
+            fontFamily: 'sans-serif',
+            color: '#e5e7db',
+            backgroundColor: '#e03420',
+            padding: { x: 24, y: 12 },
+        }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(21)
+            .setInteractive()
+            .on('pointerdown', () => this.scene.restart());
+    }
+
+    showEndScreen() {
+        this.cameras.main.resetFX();
+        this.cameras.main.setZoom(1);
+        this.cameras.backgroundColor = '#000000';
+
+        this.endOverlay.setVisible(true).setAlpha(1);
+        // this.tweens.add({
+        //     targets:  this.endOverlay,
+        //     alpha:    1,
+        //     duration: 400,
+        //     onComplete: () => {
+        //         this.endLogo.setVisible(true).setAlpha(0);
+        //         this.endBtn.setVisible(true).setAlpha(0);
+        //         this.tweens.add({
+        //             targets:  [this.endLogo, this.endBtn],
+        //             alpha:    1,
+        //             duration: 400,
+        //         });
+        //     }
+        // });
+        this.endLogo.setVisible(true).setAlpha(1);
+        this.endBtn.setVisible(true).setAlpha(1);
+        // this.tweens.add({
+        //     targets:  [this.endLogo, this.endBtn],
+        //     alpha:    1,
+        //     duration: 400,
+        // });
     }
 
     // ─── Popup ────────────────────────────────────────────────
