@@ -23,6 +23,7 @@ export class Game extends Phaser.Scene {
             typewriterRead: false,
             pocketOpen: false,
             chaveObtida: false,
+            step: 0, // 0=início 1=casaco 2=livros 3=vaso
         };
 
         this.currentRoom = 1;
@@ -47,12 +48,17 @@ export class Game extends Phaser.Scene {
         const cx = ROOM_WIDTH / 2; // centro local de cada sala
 
         // ── Sala 0 — Porta + Casaco ──────────────────────────
+        this.chao = this.add.image(0, 850, 'chao').setOrigin(0)
+
         this.porta = this.add.image(R0 + cx + 80, 500, 'porta')
             .setOrigin(0.5)
             .setScale(0.7);
 
         // cabideiro
         this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
+
+        // chapéu
+        this.add.image(R0 + cx - 230, 350, 'chapeu').setOrigin(0.5).setScale(0.5).setAngle(-75).setFlipX(true);
 
         // container do casaco
         this.casaco = this.add.image(0, 0, 'casaco')
@@ -81,10 +87,13 @@ export class Game extends Phaser.Scene {
         this.casacoGroup = this.add.container(R0 + cx - 160, 580, [
             this.casaco,
             this.bolsoGroup,
-        ]);
+        ]).setVisible(false); // revelado após ler o papel da máquina
 
         // ── Sala 1 — Mesa + Máquina ──────────────────────────
         this.add.image(R1 + cx, 780, 'mesa').setOrigin(0.5);
+
+        // quadro
+        this.add.image(R1 + cx + 50, 200, 'suprematismo').setOrigin(0.5).setScale(0.5);
 
         // folhaMaquina antes da maquina no array = fica atrás
         this.folhaMaquina = this.add.image(0, -80, 'folha-maquina')
@@ -107,6 +116,7 @@ export class Game extends Phaser.Scene {
         this.vaso = this.add.image(250, 0, 'vaso')
             .setOrigin(0.5)
             .setScale(0.6)
+            .setVisible(false) // revelado após ler os livros
             .setInteractive(new Phaser.Geom.Rectangle(30, 0, 200, 350), Phaser.Geom.Rectangle.Contains);
         //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (286×350)
         this.vaso.on('pointerdown', () => this.onVasoTap());
@@ -127,6 +137,7 @@ export class Game extends Phaser.Scene {
         this.livros = this.add.image(100, -180, 'livros')
             .setOrigin(0.5)
             .setScale(0.5)
+            .setVisible(false) // revelado após ler o bilhete do casaco
             .setInteractive();
         this.livros.on('pointerdown', () => this.onLivrosTap());
 
@@ -251,6 +262,7 @@ export class Game extends Phaser.Scene {
             '"Mesmo aqui, continuo\nouvindo os pássaros."',
             'Se for sair, leve um casaco.'
         );
+        this.unlockCasaco();
     }
 
     onCasacoTap() {
@@ -286,6 +298,7 @@ export class Game extends Phaser.Scene {
             '"Liberdade é sempre a liberdade\nde quem pensa diferente."',
             'meu maior legado foram os pensamentos que deixei'
         );
+        this.unlockLivros();
     }
 
     onLivrosTap() {
@@ -293,6 +306,30 @@ export class Game extends Phaser.Scene {
             '"Às vezes penso que o mundo\nperdeu a delicadeza."',
             'colocar dica'
         );
+        this.unlockVaso();
+    }
+
+    // ─── Unlocks ──────────────────────────────────────────────
+
+    unlockCasaco() {
+        if (this.state.step > 0) return;
+        this.state.step = 1;
+        this.casacoGroup.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.casacoGroup, alpha: 1, duration: 600 });
+    }
+
+    unlockLivros() {
+        if (this.state.step > 1) return;
+        this.state.step = 2;
+        this.livros.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.livros, alpha: 1, duration: 600 });
+    }
+
+    unlockVaso() {
+        if (this.state.step > 2) return;
+        this.state.step = 3;
+        this.vaso.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.vaso, alpha: 1, duration: 600 });
     }
 
     onVasoTap() {
@@ -349,7 +386,7 @@ export class Game extends Phaser.Scene {
         this.cameras.main.pan(this.porta.x, this.porta.y, 900, 'Power2', false, (_cam, progress) => {
             if (progress !== 1) return;
             this.cameras.main.zoomTo(3, 2500, 'Power3', false, (_cam2, p2) => {
-                if (p2 >= 0.7) this.showEndScreen();
+                if (p2 >= 0.3) this.showEndScreen();
             });
         });
     }
