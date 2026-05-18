@@ -11,7 +11,7 @@ export class MainMenu extends Phaser.Scene {
             .setScale(1.4);
 
             const balao = this.add.image(0, 0, 'balao').setOrigin(0.5).setScale(0.7);
-            const balaoTexto = this.add.text(0, -20, 'Placeholder\nfrase de abertura aqui frase de abertura placeholder', {
+            const balaoTexto = this.add.text(0, -20, 'Explore os três cômodos, encontre as pistas e descubra a chave para sair.', {
                 fontSize: '18px',
                 fontFamily: 'Georgia, serif',
                 fontStyle: 'italic',
