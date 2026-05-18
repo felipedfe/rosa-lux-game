@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
@@ -253,6 +253,17 @@ export class Game extends Phaser.Scene {
                 this.folhaMaquina.setInteractive();
                 this.folhaMaquina.on('pointerdown', () => this.onFolhaMaquinaTap());
                 if (DEBUG) this.input.enableDebug(this.folhaMaquina);
+
+                // glow: 4→0→4→0
+                const glow = this.folhaMaquina.postFX.addGlow(0xf5f242, 4, 0);
+                this.tweens.chain({
+                    tweens: [
+                        { targets: glow, outerStrength: 0, duration: 1000, ease: 'Sine.InOut' },
+                        { targets: glow, outerStrength: 4, duration: 1000, ease: 'Sine.InOut' },
+                        { targets: glow, outerStrength: 0, duration: 1000, ease: 'Sine.InOut',
+                          onComplete: () => this.folhaMaquina.postFX.remove(glow) },
+                    ],
+                });
             }
         });
     }
