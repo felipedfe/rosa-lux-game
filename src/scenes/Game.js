@@ -405,15 +405,17 @@ export class Game extends Phaser.Scene {
             .setOrigin(0.5)
             .setScrollFactor(0).setVisible(false).setDepth(21);
 
-        this.endBtn = this.add.text(cx, cy + 160, 'JOGAR NOVAMENTE', {
-            fontSize: '22px',
+        this.endBtn = this.add.text(cx, cy + 160, 'Conheça nossa biblioteca', {
+            fontSize: '20px',
             fontFamily: 'sans-serif',
             color: '#e5e7db',
             backgroundColor: '#e03420',
             padding: { x: 24, y: 12 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(21)
             .setInteractive()
-            .on('pointerdown', () => this.scene.restart());
+            .on('pointerdown', () => {
+                window.open('https://rosalux.org.br/biblioteca/', '_blank');
+            });
     }
 
     showEndScreen() {
