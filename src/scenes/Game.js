@@ -304,7 +304,7 @@ export class Game extends Phaser.Scene {
     onLivrosTap() {
         this.showPopup(
             '"Às vezes penso que o mundo\nperdeu a delicadeza."',
-            'colocar dica'
+            'Às vezes os objetos guardam mais do que parecem.'
         );
         this.unlockVaso();
     }
@@ -468,8 +468,8 @@ export class Game extends Phaser.Scene {
             lineSpacing: 10,
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
-        this.popupInstruction = this.add.text(cx, cy + 100, '', {
-            fontSize: '16px',
+        this.popupInstruction = this.add.text(cx, cy + 60, '', {
+            fontSize: '18px',
             fontFamily: 'sans-serif',
             color: '#a8a9ab',
             align: 'center',
