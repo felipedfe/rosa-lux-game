@@ -4,10 +4,9 @@ const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
 const WORLD_WIDTH = ROOM_WIDTH * 3;
 
-// centro X de cada sala no mundo
 const ROOMS = [
     ROOM_WIDTH * 0 + ROOM_WIDTH / 2,  // 270  — Porta + Casaco
-    ROOM_WIDTH * 1 + ROOM_WIDTH / 2,  // 810  — Mesa + Máquina
+    ROOM_WIDTH * 1 + ROOM_WIDTH / 2,  // 810  — Mesa + Globo
     ROOM_WIDTH * 2 + ROOM_WIDTH / 2,  // 1350 — Estante
 ];
 
@@ -20,14 +19,17 @@ export class Game extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, WORLD_WIDTH, ROOM_HEIGHT);
 
         this.state = {
-            typewriterRead: false,
-            pocketOpen: false,
-            chaveObtida: false,
-            step: 0, // 0=início 1=casaco 2=livros 3=vaso
+            globoLiftado: false,
+            pocketOpen:   false,
+            chaveObtida:  false,
+            step: 0, // 0=início 1=casaco 2=livros
         };
 
-        this.currentRoom = 1;
+        this.currentRoom    = 1;
         this.isTransitioning = false;
+        this.popupChaveGlow  = null;
+        this.folhaGloboGlow  = null;
+        this.folhaCasacoGlow = null;
 
         this.createRooms();
         this.createNavArrows();
@@ -35,7 +37,7 @@ export class Game extends Phaser.Scene {
         this.createPopupLayer();
         this.createEndScreen();
 
-        // começa na sala central (Mesa + Máquina)
+        // começa na sala central (Mesa + Globo)
         this.cameras.main.setScroll(ROOM_WIDTH, 0);
     }
 
@@ -45,40 +47,31 @@ export class Game extends Phaser.Scene {
         const R0 = ROOM_WIDTH * 0;
         const R1 = ROOM_WIDTH * 1;
         const R2 = ROOM_WIDTH * 2;
-        const cx = ROOM_WIDTH / 2; // centro local de cada sala
+        const cx = ROOM_WIDTH / 2;
 
         // ── Sala 0 — Porta + Casaco ──────────────────────────
-        this.chao = this.add.image(0, 850, 'chao').setOrigin(0)
+        this.add.image(0, 850, 'chao').setOrigin(0);
 
         this.porta = this.add.image(R0 + cx + 80, 500, 'porta')
             .setOrigin(0.5)
             .setScale(0.7);
 
-        // cabideiro
         this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
-
-        // chapéu
         this.add.image(R0 + cx - 230, 350, 'chapeu').setOrigin(0.5).setScale(0.5).setAngle(-75).setFlipX(true);
 
-        // container do casaco
         this.casaco = this.add.image(0, 0, 'casaco')
             .setOrigin(0.5)
             .setScale(0.8)
             .setInteractive(new Phaser.Geom.Rectangle(0, 0, 210, 790), Phaser.Geom.Rectangle.Contains);
-        //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (265×790)
+        //  Rectangle — coords na imagem bruta (265×790)
         this.casaco.on('pointerdown', () => this.onCasacoTap());
 
         this.bolso = this.add.image(0, 0, 'bolso')
-            .setOrigin(0.5)
-            .setAlpha(0)
-            .setVisible(false);
+            .setOrigin(0.5).setAlpha(0).setVisible(false);
 
         this.folhaCasaco = this.add.image(0, -120, 'folha-casaco')
-            .setOrigin(0.5)
-            .setAlpha(0)
-            .setVisible(false);
+            .setOrigin(0.5).setAlpha(0).setVisible(false);
 
-        // subcontainer do bolso -> bolso + bilhete juntos
         this.bolsoGroup = this.add.container(15, 200, [
             this.folhaCasaco,
             this.bolso,
@@ -87,49 +80,42 @@ export class Game extends Phaser.Scene {
         this.casacoGroup = this.add.container(R0 + cx - 160, 580, [
             this.casaco,
             this.bolsoGroup,
-        ]).setVisible(false); // revelado após ler o papel da máquina
+        ]).setVisible(false); // revelado após ler o papel do globo
 
-        // ── Sala 1 — Mesa + Máquina ──────────────────────────
+        // ── Sala 1 — Mesa + Globo ────────────────────────────
         this.add.image(R1 + cx, 780, 'mesa').setOrigin(0.5);
-
-        // quadro
         this.add.image(R1 + cx + 50, 200, 'suprematismo').setOrigin(0.5).setScale(0.5);
 
-        // folhaMaquina antes da maquina no array = fica atrás
-        this.folhaMaquina = this.add.image(0, -80, 'folha-maquina')
-            .setOrigin(0.5)
-            .setScale(0.7);
+        // poster — texto no lugar da imagem por enquanto
+        this.add.text(R1 + cx - 130, 320, '"Quem não se move,\nnão descobre o\npeso do mundo."', {
+            fontSize: '16px',
+            fontFamily: 'Georgia, serif',
+            fontStyle: 'italic',
+            color: '#e5e7db',
+            align: 'center',
+            wordWrap: { width: 180 },
+            lineSpacing: 6,
+        }).setOrigin(0.5);
 
-        this.maquina = this.add.image(0, 0, 'maquina')
-            .setOrigin(0.5)
-            .setScale(0.85)
-            .setInteractive(new Phaser.Geom.Rectangle(25, 25, 350, 230), Phaser.Geom.Rectangle.Contains);
-        //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (400×292)
-        this.maquina.on('pointerdown', () => this.onMaquinaTap());
+        // máquina como decoração (não interativa)
+        // this.add.image(R1 + cx - 60, 590, 'maquina').setOrigin(0.5).setScale(0.75);
 
-        // chave — criada antes do vaso para ficar atrás, começa invisível
-        this.chave = this.add.image(250, 60, 'chave')
+        // vaso como decoração (não interativo)
+        this.add.image(R1 + cx + 190, 610, 'vaso').setOrigin(0.5).setScale(0.5);
+
+        // folhaGlobo — fica sob o globo, começa invisível — usa asset folha-maquina
+        this.folhaGlobo = this.add.image(R1 + cx + 60, 630, 'folha-maquina')
             .setOrigin(0.5)
             .setScale(0.4)
             .setVisible(false);
 
-        this.vaso = this.add.image(250, 0, 'vaso')
+        // globo — interativo
+        this.globo = this.add.image(R1 + cx + 60, 590, 'globo')
             .setOrigin(0.5)
-            .setScale(0.6)
-            .setVisible(false) // revelado após ler os livros
-            .setInteractive(new Phaser.Geom.Rectangle(30, 0, 200, 350), Phaser.Geom.Rectangle.Contains);
-        //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (286×350)
-        this.vaso.on('pointerdown', () => this.onVasoTap());
-
-        // container — ajuste setScale para redimensionar folha + máquina juntas
-        this.maquinaGroup = this.add.container((R1 + cx) - 50, 520, [
-            this.folhaMaquina,
-            this.maquina,
-            this.chave,
-            this.vaso,
-        ]);
-        this.maquinaGroup.setScale(0.9);
-
+            .setScale(0.55)
+            .setInteractive(new Phaser.Geom.Rectangle(0, 0, 300, 420), Phaser.Geom.Rectangle.Contains);
+        //  Rectangle — coords na imagem bruta (300×420)
+        this.globo.on('pointerdown', () => this.onGloboTap());
 
         // ── Sala 2 — Estante ─────────────────────────────────
         this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.7);
@@ -141,17 +127,15 @@ export class Game extends Phaser.Scene {
             .setInteractive();
         this.livros.on('pointerdown', () => this.onLivrosTap());
 
-        // container estante + livro
         this.estanteGroup = this.add.container(R2 + cx + 50, 480, [
             this.estante,
             this.livros,
         ]);
 
         if (DEBUG) {
-            this.input.enableDebug(this.maquina);
+            this.input.enableDebug(this.globo);
             this.input.enableDebug(this.casaco);
             this.input.enableDebug(this.livros);
-            this.input.enableDebug(this.vaso);
             this.input.enableDebug(this.porta);
         }
     }
@@ -168,11 +152,7 @@ export class Game extends Phaser.Scene {
             .setFlipX(true)
             .setScrollFactor(0)
             .setDepth(5)
-            .setInteractive(
-                new Phaser.Geom.Rectangle(-70, -100, 300, 350),
-                Phaser.Geom.Rectangle.Contains
-                //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (200×154)
-            )
+            .setInteractive(new Phaser.Geom.Rectangle(-70, -100, 300, 350), Phaser.Geom.Rectangle.Contains)
             .on('pointerdown', () => this.navigateTo(this.currentRoom - 1));
 
         this.arrowRight = this.add.image(width - 30, y, 'seta')
@@ -180,11 +160,7 @@ export class Game extends Phaser.Scene {
             .setScale(0.15)
             .setScrollFactor(0)
             .setDepth(5)
-            .setInteractive(
-                new Phaser.Geom.Rectangle(0, -100, 280, 350),
-                Phaser.Geom.Rectangle.Contains
-                //  Rectangle(x, y, largura, altura) — coords no espaço da imagem bruta (200×154)
-            )
+            .setInteractive(new Phaser.Geom.Rectangle(0, -100, 280, 350), Phaser.Geom.Rectangle.Contains)
             .on('pointerdown', () => this.navigateTo(this.currentRoom + 1));
 
         this.updateArrows();
@@ -228,49 +204,50 @@ export class Game extends Phaser.Scene {
         this.input.on('pointerdown', (p) => { startX = p.x; });
 
         this.input.on('pointerup', (p) => {
-            if (startX === null) return;            // pointerup sem pointerdown nesta cena
-            if (this.popupOverlay.visible) return;  // ignora swipe com popup aberto
+            if (startX === null) return;
+            if (this.popupOverlay.visible) return;
             const dist = startX - p.x;
             startX = null;
-            if (Math.abs(dist) < 60) return;        // ignora taps
+            if (Math.abs(dist) < 60) return;
             this.navigateTo(dist > 0 ? this.currentRoom + 1 : this.currentRoom - 1);
         });
     }
 
     // ─── Interações ───────────────────────────────────────────
 
-    onMaquinaTap() {
-        if (this.state.typewriterRead) return;
-        this.state.typewriterRead = true;
-        this.sound.play('maquina-plim')
+    onGloboTap() {
+        if (this.state.globoLiftado) return;
+        this.state.globoLiftado = true;
 
         this.tweens.add({
-            targets: this.folhaMaquina,
-            y: '-=120',
-            duration: 800,
-            ease: 'Back.Out',
+            targets:  this.globo,
+            y:        '-=130',
+            duration: 500,
+            ease:     'Power2',
             onComplete: () => {
-                this.folhaMaquina.setInteractive();
-                this.folhaMaquina.on('pointerdown', () => this.onFolhaMaquinaTap());
-                if (DEBUG) this.input.enableDebug(this.folhaMaquina);
-
-                // glow: 4→0→4→0
-                const glow = this.folhaMaquina.postFX.addGlow(0xf5f242, 4, 0);
-                this.tweens.chain({
-                    tweens: [
-                        { targets: glow, outerStrength: 0, duration: 1000, ease: 'Sine.InOut' },
-                        { targets: glow, outerStrength: 4, duration: 1000, ease: 'Sine.InOut' },
-                        { targets: glow, outerStrength: 0, duration: 1000, ease: 'Sine.InOut',
-                          onComplete: () => this.folhaMaquina.postFX.remove(glow) },
-                    ],
+                this.folhaGlobo.setVisible(true).setAlpha(0);
+                this.tweens.add({
+                    targets:  this.folhaGlobo,
+                    alpha:    1,
+                    duration: 400,
+                    onComplete: () => {
+                        this.folhaGlobo.setInteractive();
+                        this.folhaGlobo.on('pointerdown', () => this.onFolhaGloboTap());
+                        this.folhaGloboGlow = this.addPersistentGlow(this.folhaGlobo);
+                        if (DEBUG) this.input.enableDebug(this.folhaGlobo);
+                    }
                 });
             }
         });
     }
 
-    onFolhaMaquinaTap() {
+    onFolhaGloboTap() {
+        if (this.folhaGloboGlow) {
+            this.folhaGlobo.postFX.remove(this.folhaGloboGlow);
+            this.folhaGloboGlow = null;
+        }
         this.showPopup(
-            '"Mesmo aqui, continuo\nouvindo os pássaros."',
+            '"A barbárie não chega vestida\nde monstro. Às vezes chega como\nmercado, ordem, pátria e guerra."',
             'Se for sair, leve um casaco.'
         );
         this.unlockCasaco();
@@ -282,21 +259,20 @@ export class Game extends Phaser.Scene {
 
         this.bolso.setVisible(true);
         this.tweens.add({
-            targets: this.bolso,
-            alpha: 1,
+            targets:  this.bolso,
+            alpha:    1,
             duration: 400,
             onComplete: () => {
                 this.folhaCasaco.setVisible(true);
                 this.tweens.add({
-                    targets: this.folhaCasaco,
-                    alpha: 1,
+                    targets:  this.folhaCasaco,
+                    alpha:    1,
                     duration: 300,
                     onComplete: () => {
                         this.folhaCasaco
-                            // .setScale(0.6)
                             .setInteractive()
                             .on('pointerdown', () => this.onBilheteTap());
-
+                        this.folhaCasacoGlow = this.addPersistentGlow(this.folhaCasaco);
                         if (DEBUG) this.input.enableDebug(this.folhaCasaco);
                     }
                 });
@@ -305,19 +281,36 @@ export class Game extends Phaser.Scene {
     }
 
     onBilheteTap() {
+        if (this.folhaCasacoGlow) {
+            this.folhaCasaco.postFX.remove(this.folhaCasacoGlow);
+            this.folhaCasacoGlow = null;
+        }
         this.showPopup(
             '"Liberdade é sempre a liberdade\nde quem pensa diferente."',
-            'meu maior legado foram os pensamentos que deixei'
+            'Há mais pensamentos a descobrir.'
         );
         this.unlockLivros();
     }
 
     onLivrosTap() {
         this.showPopup(
-            '"Às vezes penso que o mundo\nperdeu a delicadeza."',
-            'Às vezes os objetos guardam mais do que parecem.'
+            '"Mover-se com quem pensa diferente\npara impedir a barbárie."',
+            null,
+            true // mostra chave dentro do popup
         );
-        this.unlockVaso();
+    }
+
+    onPortaTap() {
+        if (!this.state.chaveObtida) return;
+
+        this.porta.setTexture('porta-aberta').disableInteractive();
+
+        this.cameras.main.pan(this.porta.x, this.porta.y, 900, 'Power2', false, (_cam, progress) => {
+            if (progress !== 1) return;
+            this.cameras.main.zoomTo(3, 2500, 'Power3', false, (_cam2, p2) => {
+                if (p2 >= 0.3) this.showEndScreen();
+            });
+        });
     }
 
     // ─── Unlocks ──────────────────────────────────────────────
@@ -336,70 +329,19 @@ export class Game extends Phaser.Scene {
         this.tweens.add({ targets: this.livros, alpha: 1, duration: 600 });
     }
 
-    unlockVaso() {
-        if (this.state.step > 2) return;
-        this.state.step = 3;
-        this.vaso.setVisible(true).setAlpha(0);
-        this.tweens.add({ targets: this.vaso, alpha: 1, duration: 600 });
-    }
+    // ─── Glow ─────────────────────────────────────────────────
 
-    onVasoTap() {
-        if (this.state.chaveObtida) return;
-
-        // vaso sobe para revelar a chave
+    addPersistentGlow(target) {
+        const glow = target.postFX.addGlow(0xf7ee43, 4, 0);
         this.tweens.add({
-            targets:  this.vaso,
-            y:        -100,
-            duration: 400,
-            ease:     'Power2',
-            onComplete: () => {
-                // chave aparece
-                this.chave.setVisible(true).setAlpha(0);
-                this.tweens.add({
-                    targets:  this.chave,
-                    alpha:    1,
-                    duration: 400,
-                    onComplete: () => {
-                        this.chave
-                            .setInteractive(new Phaser.Geom.Rectangle(0, 0, 300, 122), Phaser.Geom.Rectangle.Contains);
-                        //  Rectangle — coords na imagem bruta (300×122)
-                        this.chave.on('pointerdown', () => this.onChaveTap());
-                        if (DEBUG) this.input.enableDebug(this.chave);
-                    }
-                });
-            }
+            targets:  glow,
+            outerStrength: 0,
+            duration: 800,
+            yoyo:     true,
+            repeat:   -1,
+            ease:     'Sine.InOut',
         });
-    }
-
-    onChaveTap() {
-        if (this.state.chaveObtida) return;
-        this.state.chaveObtida = true;
-
-        this.chave.disableInteractive();
-        this.tweens.add({ targets: this.chave, alpha: 0, duration: 300,
-            onComplete: () => this.chave.setVisible(false)
-        });
-
-        this.showPopup('Você encontrou a chave!', 'Volte até a porta.');
-
-        // porta fica interativa
-        this.porta
-            .setInteractive(new Phaser.Geom.Rectangle(0, 0, this.porta.width, this.porta.height), Phaser.Geom.Rectangle.Contains)
-            .on('pointerdown', () => this.onPortaTap());
-    }
-
-    onPortaTap() {
-        if (!this.state.chaveObtida) return;
-
-        this.porta.setTexture('porta-aberta').disableInteractive();
-
-        // pan até a porta, depois zoom
-        this.cameras.main.pan(this.porta.x, this.porta.y, 900, 'Power2', false, (_cam, progress) => {
-            if (progress !== 1) return;
-            this.cameras.main.zoomTo(3, 2500, 'Power3', false, (_cam2, p2) => {
-                if (p2 >= 0.3) this.showEndScreen();
-            });
-        });
+        return glow;
     }
 
     // ─── Tela final ───────────────────────────────────────────
@@ -424,38 +366,16 @@ export class Game extends Phaser.Scene {
             padding: { x: 24, y: 12 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(21)
             .setInteractive()
-            .on('pointerdown', () => {
-                window.open('https://rosalux.org.br/biblioteca/', '_blank');
-            });
+            .on('pointerdown', () => window.open('https://rosalux.org.br/biblioteca/', '_blank'));
     }
 
     showEndScreen() {
         this.cameras.main.resetFX();
         this.cameras.main.setZoom(1);
-        this.cameras.backgroundColor = '#000000';
 
         this.endOverlay.setVisible(true).setAlpha(1);
-        // this.tweens.add({
-        //     targets:  this.endOverlay,
-        //     alpha:    1,
-        //     duration: 400,
-        //     onComplete: () => {
-        //         this.endLogo.setVisible(true).setAlpha(0);
-        //         this.endBtn.setVisible(true).setAlpha(0);
-        //         this.tweens.add({
-        //             targets:  [this.endLogo, this.endBtn],
-        //             alpha:    1,
-        //             duration: 400,
-        //         });
-        //     }
-        // });
         this.endLogo.setVisible(true).setAlpha(1);
         this.endBtn.setVisible(true).setAlpha(1);
-        // this.tweens.add({
-        //     targets:  [this.endLogo, this.endBtn],
-        //     alpha:    1,
-        //     duration: 400,
-        // });
     }
 
     // ─── Popup ────────────────────────────────────────────────
@@ -489,21 +409,31 @@ export class Game extends Phaser.Scene {
             wordWrap: { width: width - 120 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
+        // chave dentro do popup — aparece só no popup dos livros
+        this.popupChave = this.add.image(cx, cy + 130, 'chave')
+            .setOrigin(0.5)
+            .setScale(0.45)
+            .setScrollFactor(0).setVisible(false).setDepth(13)
+            .setInteractive()
+            .on('pointerdown', () => this.onPopupChaveTap());
+
         this.popupClose = this.add.text(width - 60, cy - 140, '✕', {
             fontSize: '24px',
             fontFamily: 'sans-serif',
             color: '#a8a9ab',
-        }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12)
+        }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
         this.popupClose.setInteractive(
             new Phaser.Geom.Rectangle(-15, -15, 50, 50),
             Phaser.Geom.Rectangle.Contains
-        )
-            .on('pointerdown', () => this.hidePopup());
+        ).on('pointerdown', () => this.hidePopup());
 
-        if (DEBUG) this.input.enableDebug(this.popupClose);
+        if (DEBUG) {
+            this.input.enableDebug(this.popupClose);
+            this.input.enableDebug(this.popupChave);
+        }
     }
 
-    showPopup(quote, instruction = null) {
+    showPopup(quote, instruction = null, showChave = false) {
         this.popupQuote.setText(quote);
         this.popupInstruction
             .setText(instruction ?? '')
@@ -513,12 +443,41 @@ export class Game extends Phaser.Scene {
         this.popupBox.setVisible(true);
         this.popupQuote.setVisible(true);
         this.popupClose.setVisible(true);
+
+        if (showChave) {
+            this.popupChave.setVisible(true).setAlpha(0);
+            this.tweens.add({ targets: this.popupChave, alpha: 1, duration: 300 });
+            if (!this.popupChaveGlow) {
+                this.popupChaveGlow = this.addPersistentGlow(this.popupChave);
+            }
+        }
     }
 
     hidePopup() {
         [
             this.popupOverlay, this.popupBox,
-            this.popupQuote, this.popupInstruction, this.popupClose
+            this.popupQuote, this.popupInstruction, this.popupClose,
         ].forEach(o => o.setVisible(false));
+
+        this.popupChave.setVisible(false);
+        if (this.popupChaveGlow) {
+            this.popupChave.postFX.remove(this.popupChaveGlow);
+            this.popupChaveGlow = null;
+        }
+    }
+
+    onPopupChaveTap() {
+        if (this.state.chaveObtida) return;
+        this.state.chaveObtida = true;
+
+        this.hidePopup();
+        this.showPopup('Você encontrou a chave!', 'Volte até a porta.');
+
+        this.porta
+            .setInteractive(
+                new Phaser.Geom.Rectangle(0, 0, this.porta.width, this.porta.height),
+                Phaser.Geom.Rectangle.Contains
+            )
+            .on('pointerdown', () => this.onPortaTap());
     }
 }
