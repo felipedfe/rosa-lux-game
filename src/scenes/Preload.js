@@ -22,8 +22,8 @@ export class Preload extends Phaser.Scene {
         this.load.image('mesa',          'assets/mesa.webp');
         this.load.image('maquina',       'assets/maquina.webp');
         this.load.image('folha-maquina', 'assets/folha-maquina.webp');
-        this.load.image('estante',       'assets/estante.webp');
-        this.load.image('livros',        'assets/livros.webp');
+        this.load.image('estante',       'assets/estante2.webp');
+        this.load.image('livros',        'assets/livros2.webp');
         this.load.image('vaso',          'assets/vaso.webp');
         this.load.image('seta',          'assets/seta-2.png');
         this.load.image('rosa-ilustra',  'assets/rosa-ilustra.png');
@@ -31,10 +31,12 @@ export class Preload extends Phaser.Scene {
         this.load.image('chave',         'assets/chave.webp');
         this.load.image('porta-aberta',  'assets/porta-aberta.png');
         this.load.image('logo',          'assets/logo.webp');
-        this.load.image('suprematismo',  'assets/suprematismo.webp');
+        this.load.image('papel-tex',     'assets/papel-tex.webp');
+        this.load.image('pista-globo',   'assets/pista-globo.webp');
+        this.load.image('poster',  'assets/poster.webp');
         this.load.image('chapeu',        'assets/chapeu.webp');
         this.load.image('chao',          'assets/chao-pb.webp');
-        this.load.image('globo',         'assets/globo.webp');
+        this.load.image('globo',         'assets/globo2.webp');
         this.load.audio('maquina-plim',  'assets/audio/maquina-plim.mp3');
     }
 

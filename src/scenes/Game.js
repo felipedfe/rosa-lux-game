@@ -70,7 +70,7 @@ export class Game extends Phaser.Scene {
             .setOrigin(0.5).setAlpha(0).setVisible(false);
 
         this.folhaCasaco = this.add.image(0, -120, 'folha-casaco')
-            .setOrigin(0.5).setAlpha(0).setVisible(false);
+            .setOrigin(0.5).setScale(0.9).setAlpha(0).setVisible(false);
 
         this.bolsoGroup = this.add.container(15, 200, [
             this.folhaCasaco,
@@ -84,38 +84,32 @@ export class Game extends Phaser.Scene {
 
         // ── Sala 1 — Mesa + Globo ────────────────────────────
         this.add.image(R1 + cx, 780, 'mesa').setOrigin(0.5);
-        this.add.image(R1 + cx + 50, 200, 'suprematismo').setOrigin(0.5).setScale(0.5);
-
-        // poster — texto no lugar da imagem por enquanto
-        this.add.text(R1 + cx - 130, 320, '"Quem não se move,\nnão descobre o\npeso do mundo."', {
-            fontSize: '16px',
-            fontFamily: 'Georgia, serif',
-            fontStyle: 'italic',
-            color: '#e5e7db',
-            align: 'center',
-            wordWrap: { width: 180 },
-            lineSpacing: 6,
-        }).setOrigin(0.5);
+        this.add.image(R1 + cx + 50, 200, 'poster').setOrigin(0.5).setScale(0.55);
 
         // máquina como decoração (não interativa)
         // this.add.image(R1 + cx - 60, 590, 'maquina').setOrigin(0.5).setScale(0.75);
 
         // vaso como decoração (não interativo)
-        this.add.image(R1 + cx + 190, 610, 'vaso').setOrigin(0.5).setScale(0.5);
+        this.add.image(R1 + cx + 140, 500, 'vaso').setOrigin(0.5).setScale(0.5);
 
-        // folhaGlobo — fica sob o globo, começa invisível — usa asset folha-maquina
-        this.folhaGlobo = this.add.image(R1 + cx + 60, 630, 'folha-maquina')
+        // folhaGlobo — pista, fica atrás do globo no container (ordem importa)
+        this.folhaGlobo = this.add.image(0, 90, 'pista-globo')
             .setOrigin(0.5)
             .setScale(0.4)
-            .setVisible(false);
+            .setAlpha(0);
 
-        // globo — interativo
-        this.globo = this.add.image(R1 + cx + 60, 590, 'globo')
+        // globo — interativo, renderizado na frente por ser adicionado depois
+        this.globo = this.add.image(0, 0, 'globo')
             .setOrigin(0.5)
             .setScale(0.55)
             .setInteractive(new Phaser.Geom.Rectangle(0, 0, 300, 420), Phaser.Geom.Rectangle.Contains);
-        //  Rectangle — coords na imagem bruta (300×420)
         this.globo.on('pointerdown', () => this.onGloboTap());
+
+        // container — mover globoGroup reposiciona globo e pista juntos
+        this.globoGroup = this.add.container(R1 + cx - 100, 480, [
+            this.folhaGlobo,
+            this.globo,
+        ]);
 
         // ── Sala 2 — Estante ─────────────────────────────────
         this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.7);
@@ -221,22 +215,21 @@ export class Game extends Phaser.Scene {
 
         this.tweens.add({
             targets:  this.globo,
-            y:        '-=130',
+            x:        '+=130',
             duration: 500,
             ease:     'Power2',
+        });
+        this.tweens.add({
+            targets:  this.folhaGlobo,
+            alpha:    1,
+            duration: 400,
+            delay:    100,
+            ease:     'Sine.easeIn',
             onComplete: () => {
-                this.folhaGlobo.setVisible(true).setAlpha(0);
-                this.tweens.add({
-                    targets:  this.folhaGlobo,
-                    alpha:    1,
-                    duration: 400,
-                    onComplete: () => {
-                        this.folhaGlobo.setInteractive();
-                        this.folhaGlobo.on('pointerdown', () => this.onFolhaGloboTap());
-                        this.folhaGloboGlow = this.addPersistentGlow(this.folhaGlobo);
-                        if (DEBUG) this.input.enableDebug(this.folhaGlobo);
-                    }
-                });
+                this.folhaGlobo.setInteractive();
+                this.folhaGlobo.on('pointerdown', () => this.onFolhaGloboTap());
+                this.folhaGloboGlow = this.addPersistentGlow(this.folhaGlobo);
+                if (DEBUG) this.input.enableDebug(this.folhaGlobo);
             }
         });
     }
@@ -388,14 +381,15 @@ export class Game extends Phaser.Scene {
         this.popupOverlay = this.add.rectangle(cx, cy, width, height, 0x000000, 0.75)
             .setScrollFactor(0).setVisible(false).setDepth(10);
 
-        this.popupBox = this.add.rectangle(cx, cy, width - 60, 340, 0x111111)
+        this.popupBox = this.add.image(cx, cy, 'papel-tex')
+            .setDisplaySize(width - 60, 340)
             .setScrollFactor(0).setVisible(false).setDepth(11);
 
         this.popupQuote = this.add.text(cx, cy - 70, '', {
             fontSize: '20px',
             fontFamily: 'Georgia, serif',
             fontStyle: 'italic',
-            color: '#e5e7db',
+            color: '#2c1810',
             align: 'center',
             wordWrap: { width: width - 100 },
             lineSpacing: 10,
@@ -404,7 +398,7 @@ export class Game extends Phaser.Scene {
         this.popupInstruction = this.add.text(cx, cy + 60, '', {
             fontSize: '18px',
             fontFamily: 'sans-serif',
-            color: '#a8a9ab',
+            color: '#5a4a3a',
             align: 'center',
             wordWrap: { width: width - 120 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
@@ -420,7 +414,7 @@ export class Game extends Phaser.Scene {
         this.popupClose = this.add.text(width - 60, cy - 140, '✕', {
             fontSize: '24px',
             fontFamily: 'sans-serif',
-            color: '#a8a9ab',
+            color: '#5a4a3a',
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
         this.popupClose.setInteractive(
             new Phaser.Geom.Rectangle(-15, -15, 50, 50),
