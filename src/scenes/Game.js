@@ -391,15 +391,18 @@ export class Game extends Phaser.Scene {
             .setOrigin(0.5)
             .setScrollFactor(0).setVisible(false).setDepth(21);
 
-        this.endBtn = this.add.text(cx, cy + 160, 'Conheça nossa biblioteca', {
+        this.endBtn = this.add.text(cx, cy + 160, 'Conheça o legado revolucionário de Rosa Luxemburgo ▶', {
             fontSize: '20px',
             fontFamily: 'sans-serif',
             color: '#e5e7db',
             backgroundColor: '#e03420',
             padding: { x: 24, y: 12 },
+            wordWrap: { width: 320 },
+            align: 'center',
+            lineSpacing: 8
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(21)
             .setInteractive()
-            .on('pointerdown', () => window.open('https://rosalux.org.br/biblioteca/', '_blank'));
+            .on('pointerdown', () => window.open('https://rosaluxemburgo.rosalux.org.br/', '_blank'));
     }
 
     showEndScreen() {
