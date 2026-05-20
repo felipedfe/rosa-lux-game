@@ -22,15 +22,35 @@ export class MainMenu extends Phaser.Scene {
             }).setOrigin(0.5);
             
         // container do balão -> balão + frase
-        const balaoGroup = this.add.container((width / 2) + 50, (height / 2) - 173, [balao, balaoTexto]);
+        const balaoGroup = this.add.container((width / 2) + 50, (height / 2) - 150, [balao, balaoTexto])
+            .setAlpha(0);
+
+        // surge com delay e flutua em loop
+        this.tweens.add({
+            targets:  balaoGroup,
+            alpha:    1,
+            duration: 600,
+            delay:    300,
+            ease:     'Sine.easeOut',
+            onComplete: () => {
+                this.tweens.add({
+                    targets:   balaoGroup,
+                    y:         balaoGroup.y - 10,
+                    duration:  1800,
+                    ease:      'Sine.easeInOut',
+                    yoyo:      true,
+                    repeat:    -1,
+                });
+            },
+        });
 
         // título
-        this.add.text(width / 2, height / 2 - 403, 'Rosa Lux', {
-            fontSize: '36px',
-            fontFamily: 'Georgia, serif',
-            fontStyle: 'italic',
-            color: '#e5e7db',
-        }).setOrigin(0.5);
+        // this.add.text(width / 2, height / 2 - 403, 'Rosa Lux', {
+        //     fontSize: '36px',
+        //     fontFamily: 'Georgia, serif',
+        //     fontStyle: 'italic',
+        //     color: '#e5e7db',
+        // }).setOrigin(0.5);
 
         // botão jogar
         this.add.text(width / 2, height / 2 + 365, 'JOGAR', {
