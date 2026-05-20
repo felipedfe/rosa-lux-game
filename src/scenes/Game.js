@@ -151,6 +151,8 @@ export class Game extends Phaser.Scene {
             this.livros,
         ]);
 
+        this.add.image(R2 + ROOM_WIDTH + 40, 980, 'mala').setOrigin(1, 1).setScale(0.9);
+
         if (DEBUG) {
             this.input.enableDebug(this.globo);
             this.input.enableDebug(this.casaco);
@@ -466,10 +468,12 @@ export class Game extends Phaser.Scene {
         this.bookPopupBg.setVisible(true);
         this.bookPopupClose.setVisible(true);
 
-        this.bookPopupChave.setVisible(true).setAlpha(0);
-        this.tweens.add({ targets: this.bookPopupChave, alpha: 1, duration: 300 });
-        if (!this.bookPopupChaveGlow) {
-            this.bookPopupChaveGlow = this.addPersistentGlow(this.bookPopupChave);
+        if (!this.state.chaveObtida) {
+            this.bookPopupChave.setVisible(true).setAlpha(0);
+            this.tweens.add({ targets: this.bookPopupChave, alpha: 1, duration: 300 });
+            if (!this.bookPopupChaveGlow) {
+                this.bookPopupChaveGlow = this.addPersistentGlow(this.bookPopupChave);
+            }
         }
     }
 
@@ -598,7 +602,7 @@ export class Game extends Phaser.Scene {
         });
 
         this.bookPopupQuote.setText('Você encontrou a chave!');
-        this.bookPopupInstruction.setText('Volte até a porta.').setVisible(true);
+        this.bookPopupInstruction.setText('Volte até a porta.').setVisible(false);
 
     }
 }
