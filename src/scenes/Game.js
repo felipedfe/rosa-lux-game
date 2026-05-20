@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
@@ -51,12 +51,34 @@ export class Game extends Phaser.Scene {
         const R2 = ROOM_WIDTH * 2;
         const cx = ROOM_WIDTH / 2;
 
+        // fundo — cobre todo o mundo (1620×960)
+        this.add.image(0, 0, 'fundo').setOrigin(0).setDisplaySize(WORLD_WIDTH, ROOM_HEIGHT);
+
         // ── Sala 0 — Porta + Casaco ──────────────────────────
         this.add.image(0, 850, 'chao').setOrigin(0);
 
         this.porta = this.add.image(R0 + cx + 80, 530, 'porta')
             .setOrigin(0.5)
             .setScale(0.65);
+
+        // maçanetas — zonas horizontais sobre a porta, sempre interativas
+        // ajuste x/y/w/h com DEBUG=true para encaixar nas maçanetas da imagem
+        this.macanetaEsq  = this.add.zone(R0 + cx - 40,  570, 60, 60).setInteractive();
+        this.macanetaMeio = this.add.zone(R0 + cx + 80,  570, 60, 60).setInteractive();
+        this.macanetaDir  = this.add.zone(R0 + cx + 200, 570, 60, 60).setInteractive();
+
+        this.macanetaEsq.on('pointerdown', () => {
+            if (this.state.chaveObtida) this.onPortaTap();
+            else this.onMacanetaErradaTap();
+        });
+        this.macanetaMeio.on('pointerdown', () => this.onMacanetaErradaTap());
+        this.macanetaDir .on('pointerdown', () => this.onMacanetaErradaTap());
+
+        if (DEBUG) {
+            this.input.enableDebug(this.macanetaEsq);
+            this.input.enableDebug(this.macanetaMeio);
+            this.input.enableDebug(this.macanetaDir);
+        }
 
         this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
         this.add.image(R0 + cx - 230, 350, 'chapeu').setOrigin(0.5).setScale(0.5).setAngle(-75).setFlipX(true);
@@ -296,10 +318,22 @@ export class Game extends Phaser.Scene {
         this.showBookPopup('"Mover-se com quem pensa diferente\npara impedir a barbárie."');
     }
 
+    onMacanetaErradaTap() {
+        this.tweens.add({
+            targets:  this.porta,
+            x:        '+=3',
+            duration: 30,
+            yoyo:     true,
+            repeat:   3,
+        });
+    }
+
     onPortaTap() {
         if (!this.state.chaveObtida) return;
 
-        this.porta.setTexture('porta-aberta').disableInteractive();
+        [this.macanetaEsq, this.macanetaMeio, this.macanetaDir].forEach(z => z.disableInteractive());
+        this.sound.play('porta-abre');
+        this.porta.setTexture('porta-aberta');
 
         this.cameras.main.pan(this.porta.x, this.porta.y, 900, 'Power2', false, (_cam, progress) => {
             if (progress !== 1) return;
@@ -565,11 +599,5 @@ export class Game extends Phaser.Scene {
         this.bookPopupQuote.setText('Você encontrou a chave!');
         this.bookPopupInstruction.setText('Volte até a porta.').setVisible(true);
 
-        this.porta
-            .setInteractive(
-                new Phaser.Geom.Rectangle(0, 0, this.porta.width, this.porta.height),
-                Phaser.Geom.Rectangle.Contains
-            )
-            .on('pointerdown', () => this.onPortaTap());
     }
 }
