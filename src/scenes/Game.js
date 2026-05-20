@@ -20,17 +20,17 @@ export class Game extends Phaser.Scene {
 
         this.state = {
             globoLiftado: false,
-            pocketOpen:   false,
-            chaveObtida:  false,
+            pocketOpen: false,
+            chaveObtida: false,
             step: 0, // 0=início 1=casaco 2=livros
         };
 
-        this.currentRoom    = 1;
+        this.currentRoom = 1;
         this.isTransitioning = false;
-        this.popupChaveGlow      = null;
-        this.folhaGloboGlow      = null;
-        this.folhaCasacoGlow     = null;
-        this.bookPopupChaveGlow  = null;
+        this.popupChaveGlow = null;
+        this.folhaGloboGlow = null;
+        this.folhaCasacoGlow = null;
+        this.bookPopupChaveGlow = null;
 
         this.createRooms();
         this.createNavArrows();
@@ -63,16 +63,16 @@ export class Game extends Phaser.Scene {
 
         // maçanetas — zonas horizontais sobre a porta, sempre interativas
         // ajuste x/y/w/h com DEBUG=true para encaixar nas maçanetas da imagem
-        this.macanetaEsq  = this.add.zone(R0 + cx - 40,  570, 60, 60).setInteractive();
-        this.macanetaMeio = this.add.zone(R0 + cx + 80,  570, 60, 60).setInteractive();
-        this.macanetaDir  = this.add.zone(R0 + cx + 200, 570, 60, 60).setInteractive();
+        this.macanetaEsq = this.add.zone(R0 + cx - 40, 570, 60, 60).setInteractive();
+        this.macanetaMeio = this.add.zone(R0 + cx + 80, 570, 60, 60).setInteractive();
+        this.macanetaDir = this.add.zone(R0 + cx + 200, 570, 60, 60).setInteractive();
 
         this.macanetaEsq.on('pointerdown', () => {
             if (this.state.chaveObtida) this.onPortaTap();
             else this.onMacanetaErradaTap();
         });
         this.macanetaMeio.on('pointerdown', () => this.onMacanetaErradaTap());
-        this.macanetaDir .on('pointerdown', () => this.onMacanetaErradaTap());
+        this.macanetaDir.on('pointerdown', () => this.onMacanetaErradaTap());
 
         if (DEBUG) {
             this.input.enableDebug(this.macanetaEsq);
@@ -108,12 +108,11 @@ export class Game extends Phaser.Scene {
 
         // ── Sala 1 — Mesa + Globo ────────────────────────────
         this.add.image(R1 + cx, 780, 'mesa').setOrigin(0.5);
-        this.add.image(R1 + cx + 50, 200, 'poster').setOrigin(0.5).setScale(0.55);
+        this.add.image(R1 + cx + 90, 230, 'poster').setOrigin(0.5).setScale(0.55);
 
-        // máquina como decoração (não interativa)
-        // this.add.image(R1 + cx - 60, 590, 'maquina').setOrigin(0.5).setScale(0.75);
+        this.add.image(R1 + 20, 40, 'quadro').setOrigin(0).setScale(0.4);
 
-        // vaso como decoração (não interativo)
+        // vaso
         this.add.image(R1 + cx + 140, 500, 'vaso').setOrigin(0.5).setScale(0.5);
 
         // folhaGlobo — pista, fica atrás do globo no container (ordem importa)
@@ -136,6 +135,8 @@ export class Game extends Phaser.Scene {
         ]);
 
         // ── Sala 2 — Estante ─────────────────────────────────
+        this.add.image(R2 + cx + 120, 70, 'relogio').setOrigin(0.5).setScale(0.4);
+
         this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.7);
 
         this.livros = this.add.image(140, -235, 'livros')
@@ -145,7 +146,7 @@ export class Game extends Phaser.Scene {
             .setInteractive();
         this.livros.on('pointerdown', () => this.onLivrosTap());
 
-        this.estanteGroup = this.add.container(R2 + cx + 50, 480, [
+        this.estanteGroup = this.add.container(R2 + cx + 50, 520, [
             this.estante,
             this.livros,
         ]);
@@ -243,17 +244,17 @@ export class Game extends Phaser.Scene {
         this.state.globoLiftado = true;
 
         this.tweens.add({
-            targets:  this.globo,
-            x:        '+=130',
+            targets: this.globo,
+            x: '+=130',
             duration: 500,
-            ease:     'Power2',
+            ease: 'Power2',
         });
         this.tweens.add({
-            targets:  this.folhaGlobo,
-            alpha:    1,
+            targets: this.folhaGlobo,
+            alpha: 1,
             duration: 400,
-            delay:    100,
-            ease:     'Sine.easeIn',
+            delay: 100,
+            ease: 'Sine.easeIn',
             onComplete: () => {
                 this.folhaGlobo.setInteractive();
                 this.folhaGlobo.on('pointerdown', () => this.onFolhaGloboTap());
@@ -281,14 +282,14 @@ export class Game extends Phaser.Scene {
 
         this.bolso.setVisible(true);
         this.tweens.add({
-            targets:  this.bolso,
-            alpha:    1,
+            targets: this.bolso,
+            alpha: 1,
             duration: 400,
             onComplete: () => {
                 this.folhaCasaco.setVisible(true);
                 this.tweens.add({
-                    targets:  this.folhaCasaco,
-                    alpha:    1,
+                    targets: this.folhaCasaco,
+                    alpha: 1,
                     duration: 300,
                     onComplete: () => {
                         this.folhaCasaco
@@ -320,11 +321,11 @@ export class Game extends Phaser.Scene {
 
     onMacanetaErradaTap() {
         this.tweens.add({
-            targets:  this.porta,
-            x:        '+=3',
+            targets: this.porta,
+            x: '+=3',
             duration: 30,
-            yoyo:     true,
-            repeat:   3,
+            yoyo: true,
+            repeat: 3,
         });
     }
 
@@ -364,12 +365,12 @@ export class Game extends Phaser.Scene {
     addPersistentGlow(target) {
         const glow = target.postFX.addGlow(0xf7ee43, 4, 0);
         this.tweens.add({
-            targets:  glow,
+            targets: glow,
             outerStrength: 0,
             duration: 800,
-            yoyo:     true,
-            repeat:   -1,
-            ease:     'Sine.InOut',
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut',
         });
         return glow;
     }
@@ -578,7 +579,7 @@ export class Game extends Phaser.Scene {
     onPopupChaveTap() {
         if (this.state.chaveObtida) return;
 
-          this.sound.play('key', {
+        this.sound.play('key', {
             volume: 0.4,
             rate: 1.5,
         });
@@ -590,8 +591,8 @@ export class Game extends Phaser.Scene {
         }
 
         this.tweens.add({
-            targets:  this.bookPopupChave,
-            alpha:    0,
+            targets: this.bookPopupChave,
+            alpha: 0,
             duration: 300,
             onComplete: () => this.bookPopupChave.setVisible(false),
         });
