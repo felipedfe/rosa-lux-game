@@ -27,14 +27,16 @@ export class Game extends Phaser.Scene {
 
         this.currentRoom    = 1;
         this.isTransitioning = false;
-        this.popupChaveGlow  = null;
-        this.folhaGloboGlow  = null;
-        this.folhaCasacoGlow = null;
+        this.popupChaveGlow      = null;
+        this.folhaGloboGlow      = null;
+        this.folhaCasacoGlow     = null;
+        this.bookPopupChaveGlow  = null;
 
         this.createRooms();
         this.createNavArrows();
         this.createSwipeInput();
         this.createPopupLayer();
+        this.createBookPopupLayer();
         this.createEndScreen();
 
         // começa na sala central (Mesa + Globo)
@@ -114,9 +116,9 @@ export class Game extends Phaser.Scene {
         // ── Sala 2 — Estante ─────────────────────────────────
         this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.7);
 
-        this.livros = this.add.image(100, -180, 'livros')
+        this.livros = this.add.image(140, -235, 'livros')
             .setOrigin(0.5)
-            .setScale(0.5)
+            .setScale(0.7)
             .setVisible(false) // revelado após ler o bilhete do casaco
             .setInteractive();
         this.livros.on('pointerdown', () => this.onLivrosTap());
@@ -286,11 +288,7 @@ export class Game extends Phaser.Scene {
     }
 
     onLivrosTap() {
-        this.showPopup(
-            '"Mover-se com quem pensa diferente\npara impedir a barbárie."',
-            null,
-            true // mostra chave dentro do popup
-        );
+        this.showBookPopup('"Mover-se com quem pensa diferente\npara impedir a barbárie."');
     }
 
     onPortaTap() {
@@ -369,6 +367,82 @@ export class Game extends Phaser.Scene {
         this.endOverlay.setVisible(true).setAlpha(1);
         this.endLogo.setVisible(true).setAlpha(1);
         this.endBtn.setVisible(true).setAlpha(1);
+    }
+
+    // ─── Popup do livro ───────────────────────────────────────
+
+    createBookPopupLayer() {
+        const { width, height } = this.scale;
+        const cx = width / 2;
+        const cy = height / 2;
+        const bookW = width - 40;
+        const halfPage = bookW / 4; // distância do centro a cada página
+
+        this.bookPopupBg = this.add.image(cx, cy, 'livro-aberto')
+            .setDisplaySize(bookW, 360)
+            .setScrollFactor(0).setVisible(false).setDepth(11);
+
+        this.bookPopupQuote = this.add.text(cx - halfPage, cy - 30, '', {
+            fontSize: '17px',
+            fontFamily: 'Georgia, serif',
+            fontStyle: 'italic',
+            color: '#2c1810',
+            align: 'center',
+            wordWrap: { width: bookW / 2 - 40 },
+            lineSpacing: 8,
+        }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
+
+        this.bookPopupInstruction = this.add.text(cx - halfPage, cy + 80, '', {
+            fontSize: '16px',
+            fontFamily: 'sans-serif',
+            color: '#5a4a3a',
+            align: 'center',
+            wordWrap: { width: bookW / 2 - 40 },
+        }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
+
+        this.bookPopupChave = this.add.image(cx + halfPage, cy, 'chave')
+            .setOrigin(0.5)
+            .setScale(0.45)
+            .setScrollFactor(0).setVisible(false).setDepth(12)
+            .setInteractive()
+            .on('pointerdown', () => this.onPopupChaveTap());
+
+        this.bookPopupClose = this.add.text(cx + bookW / 2 - 20, cy - 155, '✕', {
+            fontSize: '22px',
+            fontFamily: 'sans-serif',
+            color: '#5a4a3a',
+        }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
+        this.bookPopupClose.setInteractive(
+            new Phaser.Geom.Rectangle(-15, -15, 50, 50),
+            Phaser.Geom.Rectangle.Contains
+        ).on('pointerdown', () => this.hideBookPopup());
+    }
+
+    showBookPopup(quote) {
+        this.bookPopupQuote.setText(quote).setVisible(true);
+        this.bookPopupInstruction.setVisible(false);
+        this.popupOverlay.setVisible(true);
+        this.bookPopupBg.setVisible(true);
+        this.bookPopupClose.setVisible(true);
+
+        this.bookPopupChave.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.bookPopupChave, alpha: 1, duration: 300 });
+        if (!this.bookPopupChaveGlow) {
+            this.bookPopupChaveGlow = this.addPersistentGlow(this.bookPopupChave);
+        }
+    }
+
+    hideBookPopup() {
+        [
+            this.popupOverlay, this.bookPopupBg,
+            this.bookPopupQuote, this.bookPopupInstruction,
+            this.bookPopupChave, this.bookPopupClose,
+        ].forEach(o => o.setVisible(false));
+
+        if (this.bookPopupChaveGlow) {
+            this.bookPopupChave.postFX.remove(this.bookPopupChaveGlow);
+            this.bookPopupChaveGlow = null;
+        }
     }
 
     // ─── Popup ────────────────────────────────────────────────
@@ -464,8 +538,20 @@ export class Game extends Phaser.Scene {
         if (this.state.chaveObtida) return;
         this.state.chaveObtida = true;
 
-        this.hidePopup();
-        this.showPopup('Você encontrou a chave!', 'Volte até a porta.');
+        if (this.bookPopupChaveGlow) {
+            this.bookPopupChave.postFX.remove(this.bookPopupChaveGlow);
+            this.bookPopupChaveGlow = null;
+        }
+
+        this.tweens.add({
+            targets:  this.bookPopupChave,
+            alpha:    0,
+            duration: 300,
+            onComplete: () => this.bookPopupChave.setVisible(false),
+        });
+
+        this.bookPopupQuote.setText('Você encontrou a chave!');
+        this.bookPopupInstruction.setText('Volte até a porta.').setVisible(true);
 
         this.porta
             .setInteractive(
