@@ -1,4 +1,4 @@
-const DEBUG = false;
+const DEBUG = true;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
@@ -54,9 +54,9 @@ export class Game extends Phaser.Scene {
         // ── Sala 0 — Porta + Casaco ──────────────────────────
         this.add.image(0, 850, 'chao').setOrigin(0);
 
-        this.porta = this.add.image(R0 + cx + 80, 500, 'porta')
+        this.porta = this.add.image(R0 + cx + 80, 530, 'porta')
             .setOrigin(0.5)
-            .setScale(0.7);
+            .setScale(0.65);
 
         this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
         this.add.image(R0 + cx - 230, 350, 'chapeu').setOrigin(0.5).setScale(0.5).setAngle(-75).setFlipX(true);
@@ -213,6 +213,11 @@ export class Game extends Phaser.Scene {
 
     onGloboTap() {
         if (this.state.globoLiftado) return;
+
+        this.sound.play('slide', {
+            volume: 0.4,
+            rate: 1.5,
+        });
         this.state.globoLiftado = true;
 
         this.tweens.add({
@@ -382,22 +387,22 @@ export class Game extends Phaser.Scene {
             .setDisplaySize(bookW, 360)
             .setScrollFactor(0).setVisible(false).setDepth(11);
 
-        this.bookPopupQuote = this.add.text(cx - halfPage, cy - 30, '', {
+        this.bookPopupQuote = this.add.text(cx - halfPage + 25, cy - 30, '', {
             fontSize: '17px',
             fontFamily: 'Georgia, serif',
             fontStyle: 'italic',
             color: '#2c1810',
             align: 'center',
-            wordWrap: { width: bookW / 2 - 40 },
+            wordWrap: { width: bookW / 2 - 100 },
             lineSpacing: 8,
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
-        this.bookPopupInstruction = this.add.text(cx - halfPage, cy + 80, '', {
+        this.bookPopupInstruction = this.add.text(cx - halfPage + 25, cy + 80, '', {
             fontSize: '16px',
             fontFamily: 'sans-serif',
             color: '#5a4a3a',
             align: 'center',
-            wordWrap: { width: bookW / 2 - 40 },
+            wordWrap: { width: bookW / 2 - 100 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
         this.bookPopupChave = this.add.image(cx + halfPage, cy, 'chave')
@@ -419,6 +424,7 @@ export class Game extends Phaser.Scene {
     }
 
     showBookPopup(quote) {
+        this.sound.play('paper');
         this.bookPopupQuote.setText(quote).setVisible(true);
         this.bookPopupInstruction.setVisible(false);
         this.popupOverlay.setVisible(true);
@@ -502,6 +508,7 @@ export class Game extends Phaser.Scene {
     }
 
     showPopup(quote, instruction = null, showChave = false) {
+        this.sound.play('paper');
         this.popupQuote.setText(quote);
         this.popupInstruction
             .setText(instruction ?? '')
@@ -536,6 +543,11 @@ export class Game extends Phaser.Scene {
 
     onPopupChaveTap() {
         if (this.state.chaveObtida) return;
+
+          this.sound.play('key', {
+            volume: 0.4,
+            rate: 1.5,
+        });
         this.state.chaveObtida = true;
 
         if (this.bookPopupChaveGlow) {
