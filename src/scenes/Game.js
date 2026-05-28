@@ -58,10 +58,9 @@ export class Game extends Phaser.Scene {
         const cx = ROOM_WIDTH / 2;
 
         // fundo — cobre todo o mundo (1620×960)
-        this.add.image(0, 0, 'fundo').setOrigin(0).setDisplaySize(WORLD_WIDTH, ROOM_HEIGHT);
+        // this.add.image(0, 0, 'fundo').setOrigin(0).setDisplaySize(WORLD_WIDTH, ROOM_HEIGHT);
 
         // ── Sala 0 — Porta + Casaco ──────────────────────────
-        this.add.image(0, 850, 'chao').setOrigin(0);
 
         this.porta = this.add.image(R0 + cx + 80, 530, 'porta')
             .setOrigin(0.5)
@@ -113,7 +112,7 @@ export class Game extends Phaser.Scene {
         ]).setVisible(false); // revelado após ler o papel do globo
 
         // ── Sala 1 — Mesa + Globo ────────────────────────────
-        this.add.image(R1 + cx, 780, 'mesa').setOrigin(0.5);
+        this.add.image(R1 + cx, 710, 'mesa').setOrigin(0.5).setScale(0.8);
         this.add.image(R1 + cx + 90, 230, 'poster').setOrigin(0.5).setScale(0.55);
 
         this.add.image(R1 + 20, 40, 'quadro').setOrigin(0).setScale(0.4);
@@ -175,20 +174,20 @@ export class Game extends Phaser.Scene {
         const y = height / 2;
 
         this.arrowLeft = this.add.image(30, y, 'seta')
-            .setOrigin(0.5)
-            .setScale(0.15)
-            .setFlipX(true)
+            // .setOrigin(0.5)
+            .setScale(0.45)
+            .setFlipX(true) 
             .setScrollFactor(0)
             .setDepth(5)
-            .setInteractive(new Phaser.Geom.Rectangle(-70, -100, 300, 350), Phaser.Geom.Rectangle.Contains)
+            .setInteractive(new Phaser.Geom.Rectangle(-10, -30, 110, 150), Phaser.Geom.Rectangle.Contains)
             .on('pointerdown', () => this.navigateTo(this.currentRoom - 1));
 
         this.arrowRight = this.add.image(width - 30, y, 'seta')
-            .setOrigin(0.5)
-            .setScale(0.15)
+            // .setOrigin(0.5)
+            .setScale(0.45)
             .setScrollFactor(0)
             .setDepth(5)
-            .setInteractive(new Phaser.Geom.Rectangle(0, -100, 280, 350), Phaser.Geom.Rectangle.Contains)
+            .setInteractive(new Phaser.Geom.Rectangle(-10, -30, 110, 150), Phaser.Geom.Rectangle.Contains)
             .on('pointerdown', () => this.navigateTo(this.currentRoom + 1));
 
         this.updateArrows();
