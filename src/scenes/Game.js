@@ -1,4 +1,10 @@
-const DEBUG = false;
+// paleta de cores, além de preto e branco:
+// f4efe6 -> bege
+// e8442f -> vermelho
+// ccc6ba - > cinza claro
+// 9a8f7b -> cinza escuro
+
+const DEBUG = true;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
@@ -124,8 +130,9 @@ export class Game extends Phaser.Scene {
         // globo — interativo, renderizado na frente por ser adicionado depois
         this.globo = this.add.image(0, 0, 'globo')
             .setOrigin(0.5)
-            .setScale(0.55)
-            .setInteractive(new Phaser.Geom.Rectangle(0, 0, 300, 420), Phaser.Geom.Rectangle.Contains);
+            .setScale(0.8)
+            .setInteractive();
+            // .setInteractive({ pixelPerfect: true });
         this.globo.on('pointerdown', () => this.onGloboTap());
 
         // container — mover globoGroup reposiciona globo e pista juntos
