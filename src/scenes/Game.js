@@ -112,13 +112,13 @@ export class Game extends Phaser.Scene {
         ]).setVisible(false); // revelado após ler o papel do globo
 
         // ── Sala 1 — Mesa + Globo ────────────────────────────
-        this.add.image(R1 + cx, 710, 'mesa').setOrigin(0.5).setScale(0.8);
-        this.add.image(R1 + cx + 90, 230, 'poster').setOrigin(0.5).setScale(0.55);
+        this.add.image(R1 + cx, 710, 'mesa').setOrigin(0.5).setScale(0.78);
+        this.add.image(R1 + cx + 90, 230, 'poster').setOrigin(0.5).setScale(0.8);
 
-        this.add.image(R1 + 20, 40, 'quadro').setOrigin(0).setScale(0.4);
+        this.add.image(R1 + 20, 40, 'poster-foice').setOrigin(0).setScale(0.7);
 
         // vaso
-        this.add.image(R1 + cx + 140, 500, 'vaso').setOrigin(0.5).setScale(0.5);
+        this.add.image(R1 + cx + 140, 500, 'livro-lapis').setOrigin(0.5).setScale(0.7);
 
         // folhaGlobo — pista, fica atrás do globo no container (ordem importa)
         this.folhaGlobo = this.add.image(0, 90, 'pista-globo')
@@ -129,7 +129,7 @@ export class Game extends Phaser.Scene {
         // globo — interativo, renderizado na frente por ser adicionado depois
         this.globo = this.add.image(0, 0, 'globo')
             .setOrigin(0.5)
-            .setScale(0.8)
+            .setScale(0.7)
             .setInteractive();
             // .setInteractive({ pixelPerfect: true });
         this.globo.on('pointerdown', () => this.onGloboTap());

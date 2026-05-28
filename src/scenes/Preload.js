@@ -20,11 +20,10 @@ export class Preload extends Phaser.Scene {
         this.load.image('bolso',         'assets/bolso.webp');
         this.load.image('folha-casaco',  'assets/folha-casaco.webp');
         this.load.image('mesa',          'assets/mesa.webp');
-        this.load.image('maquina',       'assets/maquina.webp');
         this.load.image('folha-maquina', 'assets/folha-maquina.webp');
         this.load.image('estante',       'assets/estante2.webp');
         this.load.image('livros',        'assets/livros2.webp');
-        this.load.image('vaso',          'assets/vaso.webp');
+        this.load.image('livro-lapis',          'assets/livro-lapis.webp');
         this.load.image('seta',          'assets/seta.png');
         this.load.image('rosa-ilustra',  'assets/rosa-ilustra.png');
         this.load.image('balao',         'assets/balao.png');
@@ -37,13 +36,13 @@ export class Preload extends Phaser.Scene {
         this.load.image('livro-aberto',  'assets/livro-aberto.webp');
         this.load.image('poster',  'assets/poster.webp');
         this.load.image('chapeu',        'assets/chapeu.webp');
-        this.load.image('chao',          'assets/chao-pb.webp');
+
         this.load.image('globo',         'assets/globo.webp');
-        this.load.image('quadro',          'assets/suprematismo.webp');
+        this.load.image('poster-foice',          'assets/poster-pequeno.png');
         this.load.image('relogio',         'assets/relogio.webp');
         this.load.image('mala',            'assets/mala.webp');
         
-        this.load.audio('maquina-plim',  'assets/audio/maquina-plim.mp3');
+
         this.load.audio('paper',         'assets/audio/paper.m4a');
         this.load.audio('porta-abre',    'assets/audio/porta-abre.m4a');
         this.load.audio('slide',         'assets/audio/slide.m4a');
