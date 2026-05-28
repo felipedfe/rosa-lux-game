@@ -28,7 +28,7 @@ export class Game extends Phaser.Scene {
             globoLiftado: false,
             pocketOpen: false,
             chaveObtida: false,
-            step: 0, // 0=início 1=casaco 2=livros
+            step: 0, // 0=início 1=casaco 2=livro
         };
 
         this.currentRoom = 1;
@@ -86,11 +86,10 @@ export class Game extends Phaser.Scene {
         }
 
         this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
-        this.add.image(R0 + cx - 230, 350, 'chapeu').setOrigin(0.5).setScale(0.5).setAngle(-75).setFlipX(true);
 
         this.casaco = this.add.image(0, 0, 'casaco')
             .setOrigin(0.5)
-            .setScale(0.8)
+            .setScale(0.9)
             .setInteractive(new Phaser.Geom.Rectangle(0, 0, 210, 790), Phaser.Geom.Rectangle.Contains);
         //  Rectangle — coords na imagem bruta (265×790)
         this.casaco.on('pointerdown', () => this.onCasacoTap());
@@ -104,7 +103,7 @@ export class Game extends Phaser.Scene {
         this.bolsoGroup = this.add.container(15, 200, [
             this.folhaCasaco,
             this.bolso,
-        ]).setScale(0.3);
+        ]).setScale(0.9);
 
         this.casacoGroup = this.add.container(R0 + cx - 160, 580, [
             this.casaco,
@@ -141,28 +140,28 @@ export class Game extends Phaser.Scene {
         ]);
 
         // ── Sala 2 — Estante ─────────────────────────────────
-        this.add.image(R2 + cx + 120, 70, 'relogio').setOrigin(0.5).setScale(0.4);
+        this.add.image(R2 + cx + 120, 70, 'vaso').setOrigin(0.5).setScale(0.7);
 
-        this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.7);
+        this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.9);
 
-        this.livros = this.add.image(140, -235, 'livros')
+        this.livro = this.add.image(140, -235, 'livro')
             .setOrigin(0.5)
             .setScale(0.7)
             .setVisible(false) // revelado após ler o bilhete do casaco
             .setInteractive();
-        this.livros.on('pointerdown', () => this.onLivrosTap());
+        this.livro.on('pointerdown', () => this.onLivroTap());
 
-        this.estanteGroup = this.add.container(R2 + cx + 50, 520, [
+        this.estanteGroup = this.add.container(R2 + cx + 5, 515, [
             this.estante,
-            this.livros,
+            this.livro,
         ]);
 
-        this.add.image(R2 + ROOM_WIDTH + 40, 980, 'mala').setOrigin(1, 1).setScale(0.9);
+        this.add.image(R2 + ROOM_WIDTH - 100, 0, 'flamula').setOrigin(0, 0).setScale(0.9);
 
         if (DEBUG) {
             this.input.enableDebug(this.globo);
             this.input.enableDebug(this.casaco);
-            this.input.enableDebug(this.livros);
+            this.input.enableDebug(this.livro);
             this.input.enableDebug(this.porta);
         }
     }
@@ -320,10 +319,10 @@ export class Game extends Phaser.Scene {
             '"Liberdade é sempre a liberdade\nde quem pensa diferente."',
             'Há mais pensamentos a descobrir.'
         );
-        this.unlockLivros();
+        this.unlockLivro();
     }
 
-    onLivrosTap() {
+    onLivroTap() {
         this.showBookPopup('"Mover-se com quem pensa diferente\npara impedir a barbárie."');
     }
 
@@ -361,11 +360,11 @@ export class Game extends Phaser.Scene {
         this.tweens.add({ targets: this.casacoGroup, alpha: 1, duration: 600 });
     }
 
-    unlockLivros() {
+    unlockLivro() {
         if (this.state.step > 1) return;
         this.state.step = 2;
-        this.livros.setVisible(true).setAlpha(0);
-        this.tweens.add({ targets: this.livros, alpha: 1, duration: 600 });
+        this.livro.setVisible(true).setAlpha(0);
+        this.tweens.add({ targets: this.livro, alpha: 1, duration: 600 });
     }
 
     // ─── Glow ─────────────────────────────────────────────────
@@ -531,7 +530,7 @@ export class Game extends Phaser.Scene {
             wordWrap: { width: width - 120 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
-        // chave dentro do popup — aparece só no popup dos livros
+        // chave dentro do popup — aparece só no popup dos livro
         this.popupChave = this.add.image(cx, cy + 130, 'chave')
             .setOrigin(0.5)
             .setScale(0.45)

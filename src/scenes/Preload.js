@@ -14,15 +14,15 @@ export class Preload extends Phaser.Scene {
             bar.width = 300 * progress;
         });
 
-        this.load.image('porta',         'assets/porta2.webp');
+        this.load.image('porta',         'assets/porta.webp');
         this.load.image('casaco',        'assets/casaco.webp');
         this.load.image('cabideiro',     'assets/cabideiro.webp');
         this.load.image('bolso',         'assets/bolso.webp');
         this.load.image('folha-casaco',  'assets/folha-casaco.webp');
         this.load.image('mesa',          'assets/mesa.webp');
         this.load.image('folha-maquina', 'assets/folha-maquina.webp');
-        this.load.image('estante',       'assets/estante2.webp');
-        this.load.image('livros',        'assets/livros2.webp');
+        this.load.image('estante',       'assets/estante.webp');
+        this.load.image('livro',        'assets/livro.webp');
         this.load.image('livro-lapis',          'assets/livro-lapis.webp');
         this.load.image('seta',          'assets/seta.png');
         this.load.image('rosa-ilustra',  'assets/rosa-ilustra.png');
@@ -35,12 +35,11 @@ export class Preload extends Phaser.Scene {
         this.load.image('pista-globo',   'assets/pista-globo.webp');
         this.load.image('livro-aberto',  'assets/livro-aberto.webp');
         this.load.image('poster',  'assets/poster.webp');
-        this.load.image('chapeu',        'assets/chapeu.webp');
 
         this.load.image('globo',         'assets/globo.webp');
         this.load.image('poster-foice',          'assets/poster-pequeno.png');
-        this.load.image('relogio',         'assets/relogio.webp');
-        this.load.image('mala',            'assets/mala.webp');
+        this.load.image('vaso',         'assets/vaso.webp');
+        this.load.image('flamula',            'assets/flamula.webp');
         
 
         this.load.audio('paper',         'assets/audio/paper.m4a');
