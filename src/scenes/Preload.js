@@ -44,6 +44,7 @@ export class Preload extends Phaser.Scene {
         this.load.image('planta-vaso',         'assets/vaso-pt-2.webp');
         this.load.image('flamula',            'assets/flamula.webp');
         this.load.image('botao-jogar',        'assets/botao-jogar.webp');
+        this.load.image('oculos',             'assets/oculos2.webp');
         
 
         this.load.audio('paper',         'assets/audio/paper.m4a');

@@ -131,7 +131,7 @@ export class Game extends Phaser.Scene {
         // folhaGlobo — pista, fica atrás do globo no container (ordem importa)
         this.folhaGlobo = this.add.image(0, 90, 'pista-globo')
             .setOrigin(0.5)
-            .setScale(0.4)
+            .setScale(0.5)
             .setAlpha(0);
 
         // globo — interativo, renderizado na frente por ser adicionado depois
@@ -168,13 +168,37 @@ export class Game extends Phaser.Scene {
             .setOrigin(0.5)
             .setScale(0.55)
             .setVisible(true) // revelado após ler o bilhete do casaco @aqui
-            .setInteractive();
+            .setInteractive(new Phaser.Geom.Rectangle(-25, -25, 100, 270), Phaser.Geom.Rectangle.Contains);
         this.livro.on('pointerdown', () => this.onLivroTap());
 
         this.estanteGroup = this.add.container(R2 + cx + 5, 515, [
             this.estante,
             this.livro,
         ]);
+
+        // óculos — aparece no quadro da estante ao toque
+        const frameX = R2 + cx + 51;
+        const frameY = 285;
+        const frameW = 90;
+        const frameH = 103;
+
+        const maskShape = this.add.graphics();
+        maskShape.fillRect(frameX, frameY, frameW, frameH);
+
+        // começa acima do quadro (fora da máscara = invisível)
+        this.oculos = this.add.image(frameX + frameW / 2, frameY - 20, 'oculos')
+            .setOrigin(0.5)
+            .setScale(0.2)
+            .setMask(maskShape.createGeometryMask());
+
+        // zona interativa sobre o quadro
+        const quadroZone = this.add.zone(frameX, frameY, frameW, frameH).setOrigin(0).setInteractive();
+        quadroZone.on('pointerdown', () => this.onQuadroTap());
+
+        if (DEBUG) {
+            this.add.rectangle(frameX, frameY, frameW, frameH, 0xff0000, 0.3).setOrigin(0);
+            this.input.enableDebug(quadroZone);
+        }
 
         this.flamula = this.add.image(R2 + cx - 3, 400, 'flamula')
             .setOrigin(0.5, 0)
@@ -338,6 +362,20 @@ export class Game extends Phaser.Scene {
             'Há mais pensamentos a descobrir.'
         );
         this.unlockLivro();
+    }
+
+    onQuadroTap() {
+        if (this.ocolosDesceu) return;
+        this.ocolosDesceu = true;
+
+        const frameY = 268;
+        const frameH = 103;
+        this.tweens.add({
+            targets: this.oculos,
+            y: frameY + frameH / 2 + 10,
+            duration: 1000,
+            ease: 'Power2.Out',
+        });
     }
 
     onPlantaTap() {
@@ -565,7 +603,7 @@ export class Game extends Phaser.Scene {
             .setScrollFactor(0).setVisible(false).setDepth(11);
 
         this.popupQuote = this.add.text(cx, cy - 70, '', {
-            fontSize: '23px',
+            fontSize: '27px',
             fontFamily: '"Shadows Into Light", cursive',
             fontStyle: 'italic',
             color: '#2c1810',
@@ -575,9 +613,9 @@ export class Game extends Phaser.Scene {
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
         this.popupInstruction = this.add.text(cx, cy + 60, '', {
-            fontSize: '21px',
+            fontSize: '24px',
             fontFamily: '"Shadows Into Light", cursive',
-            color: '#5a4a3a',
+            color: '#e8442f',
             align: 'center',
             wordWrap: { width: width - 120 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
