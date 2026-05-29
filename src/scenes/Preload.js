@@ -31,7 +31,7 @@ export class Preload extends Phaser.Scene {
         this.load.image('rosa-ilustra',  'assets/rosa.webp');
         this.load.image('balao',         'assets/balao.webp');
         this.load.image('chave',         'assets/chave.webp');
-        this.load.image('porta-aberta',  'assets/porta-aberta2.png');
+        this.load.image('porta-aberta',  'assets/porta-aberta3.png');
         this.load.image('fundo',         'assets/fundo.webp');
         this.load.image('logo',          'assets/logo.webp');
         this.load.image('papel-popup',     'assets/papel-popup.webp');

@@ -4,7 +4,7 @@
 // ccc6ba - > cinza claro
 // 9a8f7b -> cinza escuro
 
-const DEBUG = false;
+const DEBUG = true;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
@@ -62,7 +62,7 @@ export class Game extends Phaser.Scene {
 
         // ── Sala 0 — Porta + Casaco ──────────────────────────
 
-        this.porta = this.add.image(-10, 120, 'porta')
+        this.porta = this.add.image(-10, 113, 'porta')
             .setOrigin(0.5)
             .setScale(0.85);
 
@@ -77,9 +77,9 @@ export class Game extends Phaser.Scene {
 
         // maçanetas — zonas horizontais sobre a porta, sempre interativas
         // ajuste x/y/w/h com DEBUG=true para encaixar nas maçanetas da imagem
-        this.macanetaEsq = this.add.zone(R0 + cx - 195, 500, 60, 80).setInteractive();
-        this.macanetaMeio = this.add.zone(R0 + cx - 100, 500, 60, 80).setInteractive();
-        this.macanetaDir = this.add.zone(R0 + cx - 5, 500, 60, 80).setInteractive();
+        this.macanetaEsq = this.add.zone(R0 + cx - 195, 490, 60, 80).setInteractive();
+        this.macanetaMeio = this.add.zone(R0 + cx - 100, 490, 60, 80).setInteractive();
+        this.macanetaDir = this.add.zone(R0 + cx - 5, 490, 60, 80).setInteractive();
 
         this.macanetaEsq.on('pointerdown', () => {
             if (this.state.chaveObtida) this.onPortaTap();
@@ -553,7 +553,7 @@ export class Game extends Phaser.Scene {
             color: '#5a4a3a',
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
         this.bookPopupClose.setInteractive(
-            new Phaser.Geom.Rectangle(-15, -15, 50, 50),
+            new Phaser.Geom.Rectangle(-15, -15, 65, 65),
             Phaser.Geom.Rectangle.Contains
         ).on('pointerdown', () => this.hideBookPopup());
     }
@@ -634,7 +634,7 @@ export class Game extends Phaser.Scene {
             color: '#5a4a3a',
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
         this.popupClose.setInteractive(
-            new Phaser.Geom.Rectangle(-15, -15, 50, 50),
+            new Phaser.Geom.Rectangle(-15, -15, 65, 65),
             Phaser.Geom.Rectangle.Contains
         ).on('pointerdown', () => this.hidePopup());
 
