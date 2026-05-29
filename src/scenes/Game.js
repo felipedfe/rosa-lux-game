@@ -47,6 +47,8 @@ export class Game extends Phaser.Scene {
 
         // começa na sala central (Mesa + Globo)
         this.cameras.main.setScroll(ROOM_WIDTH, 0);
+
+        this.sound.play('musica-fundo', { loop: true, volume: 0.25 });
     }
 
     // ─── Salas ────────────────────────────────────────────────

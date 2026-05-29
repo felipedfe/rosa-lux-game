@@ -29,7 +29,9 @@ export class Preload extends Phaser.Scene {
         this.load.image('livro',        'assets/livro.webp');
         this.load.image('livro-lapis',          'assets/livro-lapis.webp');
         this.load.image('seta',          'assets/seta.png');
-        this.load.image('rosa-ilustra',  'assets/rosa.webp');
+        this.load.image('rosa-ilustra',  'assets/rosa-parte.webp');
+        this.load.image('braco-esq',     'assets/braco-esq.webp');
+        this.load.image('braco-dir',     'assets/braco-dir.webp');
         this.load.image('balao',         'assets/balao.webp');
         this.load.image('chave',         'assets/chave.webp');
         this.load.image('porta-aberta',  'assets/porta-aberta3.png');
@@ -48,6 +50,7 @@ export class Preload extends Phaser.Scene {
         this.load.image('oculos',             'assets/oculos2.webp');
         
 
+        this.load.audio('musica-fundo',    'assets/audio/fundo.m4a');
         this.load.audio('paper',           'assets/audio/paper.m4a');
         this.load.audio('porta-abre',      'assets/audio/porta-abre.m4a');
         this.load.audio('slide',           'assets/audio/slide.m4a');

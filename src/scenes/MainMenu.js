@@ -22,9 +22,28 @@ export class MainMenu extends Phaser.Scene {
         const balaoGroup = this.add.container((width / 2) - 70, (height / 2) - 200, [balao, balaoTexto])
             .setAlpha(0);
 
-        this.add.image((width / 2) + 100, height - 310, 'rosa-ilustra')
-            .setOrigin(0.5, 0.5)
+        const rosaParte = this.add.image(0, 0, 'rosa-ilustra').setOrigin(0.5)
+        // .setVisible(false);
+        const bracoEsq  = this.add.image(0, 60, 'braco-esq').setOrigin(0, 0);
+        const bracoDir  = this.add.image(-200, -50, 'braco-dir').setOrigin(0, 0);
+
+        this.add.container((width / 2) + 100, height - 310, [rosaParte, bracoEsq, bracoDir])
             .setScale(0.9);
+
+        this.time.addEvent({
+            delay: 5000,
+            loop: true,
+            callback: () => {
+                this.tweens.add({
+                    targets: [bracoEsq, bracoDir],
+                    angle: 5,
+                    duration: 60,
+                    ease: 'Sine.InOut',
+                    yoyo: true,
+                    repeat: 3,
+                });
+            },
+        });
 
         // surge com delay e flutua em loop
         this.tweens.add({
