@@ -494,12 +494,12 @@ export class Game extends Phaser.Scene {
         const cx = width / 2;
         const cy = height / 2;
 
-        this.endOverlay = this.add.rectangle(cx, cy, width, height, 0x000000, 1)
+        this.endOverlay = this.add.rectangle(cx, cy, width, height, 0x18417d, 1)
             .setScrollFactor(0).setVisible(false).setDepth(20);
 
         this.endLogo = this.add.image(cx, cy - 60, 'logo')
             .setOrigin(0.5)
-            .setScrollFactor(0).setVisible(false).setDepth(21).setScale(0.85);
+            .setScrollFactor(0).setVisible(false).setDepth(21).setScale(0.9);
 
         this.endBtn = this.add.text(cx, cy + 160, 'Conheça o legado revolucionário de Rosa Luxemburgo ▶', {
             fontSize: '27px',
