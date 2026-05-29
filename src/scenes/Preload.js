@@ -48,10 +48,13 @@ export class Preload extends Phaser.Scene {
         this.load.image('oculos',             'assets/oculos2.webp');
         
 
-        this.load.audio('paper',         'assets/audio/paper.m4a');
-        this.load.audio('porta-abre',    'assets/audio/porta-abre.m4a');
-        this.load.audio('slide',         'assets/audio/slide.m4a');
-        this.load.audio('key',         'assets/audio/key.m4a');
+        this.load.audio('paper',           'assets/audio/paper.m4a');
+        this.load.audio('porta-abre',      'assets/audio/porta-abre.m4a');
+        this.load.audio('slide',           'assets/audio/slide.m4a');
+        this.load.audio('key',             'assets/audio/key.m4a');
+        this.load.audio('som-flamula',     'assets/audio/som-flamula.m4a');
+        this.load.audio('som-oculos',      'assets/audio/som-oculos.m4a');
+        this.load.audio('som-planta-vaso', 'assets/audio/som-planta-vaso.m4a');
     }
 
     create() {

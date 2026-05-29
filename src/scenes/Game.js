@@ -4,7 +4,7 @@
 // ccc6ba - > cinza claro
 // 9a8f7b -> cinza escuro
 
-const DEBUG = true;
+const DEBUG = false;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
@@ -341,6 +341,7 @@ export class Game extends Phaser.Scene {
         if (this.state.pocketOpen) return;
         this.state.pocketOpen = true;
 
+        this.sound.play('slide', { volume: 0.4, rate: 1.5 });
         this.folhaCasaco.setVisible(true).setY(-20);
         this.tweens.add({
             targets: this.folhaCasaco,
@@ -372,6 +373,7 @@ export class Game extends Phaser.Scene {
     onQuadroTap() {
         if (this.ocolosDesceu) return;
         this.ocolosDesceu = true;
+        this.sound.play('som-oculos');
 
         const frameY = 268;
         const frameH = 103;
@@ -386,6 +388,7 @@ export class Game extends Phaser.Scene {
     onPlantaTap() {
         if (this.plantaShaking) return;
         this.plantaShaking = true;
+        this.sound.play('som-planta-vaso');
         this.tweens.add({
             targets: this.plantaVaso,
             x: '+=5',
@@ -403,6 +406,7 @@ export class Game extends Phaser.Scene {
     onFlamulaSwing() {
         if (this.flamulaSwinging) return;
         this.flamulaSwinging = true;
+        this.sound.play('som-flamula');
         this.tweens.add({
             targets: this.flamula,
             angle: 10,
@@ -493,17 +497,17 @@ export class Game extends Phaser.Scene {
 
         this.endLogo = this.add.image(cx, cy - 60, 'logo')
             .setOrigin(0.5)
-            .setScrollFactor(0).setVisible(false).setDepth(21);
+            .setScrollFactor(0).setVisible(false).setDepth(21).setScale(0.85);
 
         this.endBtn = this.add.text(cx, cy + 160, 'Conheça o legado revolucionário de Rosa Luxemburgo ▶', {
-            fontSize: '23px',
+            fontSize: '27px',
             fontFamily: '"Shadows Into Light", cursive',
             color: '#e5e7db',
             backgroundColor: '#e03420',
             padding: { x: 24, y: 12 },
             wordWrap: { width: 320 },
             align: 'center',
-            lineSpacing: 8
+            // lineSpacing: 8
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(21)
             .setInteractive()
             .on('pointerdown', () => window.open('https://rosaluxemburgo.rosalux.org.br/', '_blank'));
@@ -524,47 +528,73 @@ export class Game extends Phaser.Scene {
         const { width, height } = this.scale;
         const cx = width / 2;
         const cy = height / 2;
-        const bookW = width - 40;
-        const halfPage = bookW / 4; // distância do centro a cada página
 
-        this.bookPopupBg = this.add.image(cx, cy, 'livro-aberto')
-            .setDisplaySize(bookW, 360)
+        // papel atrás com o texto
+        this.bookPopupBg = this.add.image(cx, cy - 100, 'papel-popup')
+            .setDisplaySize(width - 50, 420)
             .setScrollFactor(0).setVisible(false).setDepth(11);
 
-        this.bookPopupQuote = this.add.text(cx - halfPage + 25, cy - 30, '', {
-            fontSize: '23px',
+        this.bookPopupQuote = this.add.text(cx, cy - 155, '', {
+            fontSize: '27px',
             fontFamily: '"Shadows Into Light", cursive',
             fontStyle: 'italic',
             color: '#2c1810',
             align: 'center',
-            wordWrap: { width: bookW / 2 - 100 },
+            wordWrap: { width: width - 100 },
             lineSpacing: 8,
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
-        this.bookPopupInstruction = this.add.text(cx - halfPage + 25, cy + 80, '', {
+        this.bookPopupInstruction = this.add.text(cx, cy - 60, '', {
             fontSize: '19px',
             fontFamily: '"Shadows Into Light", cursive',
             color: '#5a4a3a',
             align: 'center',
-            wordWrap: { width: bookW / 2 - 100 },
+            wordWrap: { width: width - 100 },
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
-        this.bookPopupChave = this.add.image(cx + halfPage, cy, 'chave')
-            .setOrigin(0.5)
-            .setScale(0.45)
-            .setScrollFactor(0).setVisible(false).setDepth(12)
+        // livro aberto embaixo
+        this.bookPopupLivro = this.add.image(cx, cy + 100, 'livro-aberto')
+            .setDisplaySize(width - 40, 220)
+            .setScrollFactor(0).setVisible(false).setDepth(12).setScale(0.9);
+
+        // risquinhos girando — Graphics num container para rotacionar
+        const raysY = cy;
+        this.bookPopupRaysContainer = this.add.container(cx, raysY)
+            .setScrollFactor(0).setVisible(false).setDepth(12);
+
+        const raysGfx = this.add.graphics();
+        raysGfx.lineStyle(2.5, 0x222222, 1);
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 2;
+            const inner = i % 2 === 0 ? 32 : 38;
+            const outer = i % 2 === 0 ? 56 : 50;
+            raysGfx.lineBetween(
+                Math.cos(angle) * inner, Math.sin(angle) * inner,
+                Math.cos(angle) * outer, Math.sin(angle) * outer
+            );
+        }
+        this.bookPopupRaysContainer.add(raysGfx);
+        this.bookPopupRaysTween = null;
+
+        // chave em cima dos risquinhos
+        this.bookPopupChave = this.add.image(cx, raysY + 40, 'chave')
+            .setOrigin(0.5).setScale(0.9)
+            .setScrollFactor(0).setVisible(false).setDepth(13)
             .setInteractive()
             .on('pointerdown', () => this.onPopupChaveTap());
 
-        this.bookPopupClose = this.add.text(cx + bookW / 2 - 20, cy - 155, '✕', {
+        // fechar — canto superior direito do papel
+        this.bookPopupClose = this.add.text(width - 40, cy - 255, '✕', {
             fontSize: '25px',
             fontFamily: '"Shadows Into Light", cursive',
             color: '#5a4a3a',
-        }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
+        }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(13);
         this.bookPopupClose.setInteractive(
-            new Phaser.Geom.Rectangle(-15, -15, 65, 65),
+            new Phaser.Geom.Rectangle(-25, -25, 70, 70),
             Phaser.Geom.Rectangle.Contains
         ).on('pointerdown', () => this.hideBookPopup());
+
+        if (DEBUG) this.input.enableDebug(this.bookPopupClose);
     }
 
     showBookPopup(quote) {
@@ -573,27 +603,43 @@ export class Game extends Phaser.Scene {
         this.bookPopupInstruction.setVisible(false);
         this.popupOverlay.setVisible(true);
         this.bookPopupBg.setVisible(true);
+        this.bookPopupLivro.setVisible(true);
         this.bookPopupClose.setVisible(true);
 
         if (!this.state.chaveObtida) {
+            this.bookPopupRaysContainer.setVisible(true);
             this.bookPopupChave.setVisible(true).setAlpha(0);
             this.tweens.add({ targets: this.bookPopupChave, alpha: 1, duration: 300 });
             if (!this.bookPopupChaveGlow) {
                 this.bookPopupChaveGlow = this.addPersistentGlow(this.bookPopupChave);
+            }
+            if (!this.bookPopupRaysTween) {
+                this.bookPopupRaysTween = this.tweens.add({
+                    targets: this.bookPopupRaysContainer,
+                    angle: 360,
+                    duration: 3000,
+                    repeat: -1,
+                    ease: 'Linear',
+                });
             }
         }
     }
 
     hideBookPopup() {
         [
-            this.popupOverlay, this.bookPopupBg,
-            this.bookPopupQuote, this.bookPopupInstruction,
-            this.bookPopupChave, this.bookPopupClose,
+            this.popupOverlay, this.bookPopupBg, this.bookPopupLivro,
+            this.bookPopupRaysContainer, this.bookPopupQuote,
+            this.bookPopupInstruction, this.bookPopupChave, this.bookPopupClose,
         ].forEach(o => o.setVisible(false));
 
         if (this.bookPopupChaveGlow) {
             this.bookPopupChave.postFX.remove(this.bookPopupChaveGlow);
             this.bookPopupChaveGlow = null;
+        }
+        if (this.bookPopupRaysTween) {
+            this.bookPopupRaysTween.stop();
+            this.bookPopupRaysTween = null;
+            this.bookPopupRaysContainer.setAngle(0);
         }
     }
 
@@ -700,6 +746,11 @@ export class Game extends Phaser.Scene {
             this.bookPopupChave.postFX.remove(this.bookPopupChaveGlow);
             this.bookPopupChaveGlow = null;
         }
+        if (this.bookPopupRaysTween) {
+            this.bookPopupRaysTween.stop();
+            this.bookPopupRaysTween = null;
+        }
+        this.bookPopupRaysContainer.setVisible(false);
 
         this.tweens.add({
             targets: this.bookPopupChave,
