@@ -4,7 +4,7 @@
 // ccc6ba - > cinza claro
 // 9a8f7b -> cinza escuro
 
-const DEBUG = true;
+const DEBUG = false;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
