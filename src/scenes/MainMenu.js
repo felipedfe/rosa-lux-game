@@ -6,40 +6,41 @@ export class MainMenu extends Phaser.Scene {
     create() {
         const { width, height } = this.scale;
 
-        this.add.image((width / 2) - 200, height, 'rosa-ilustra')
-            .setOrigin(0.5, 0.5)
-            .setScale(1.4);
 
-            const balao = this.add.image(0, 0, 'balao').setOrigin(0.5).setScale(0.7);
-            const balaoTexto = this.add.text(0, -20, 'Explore as três áreas do cômodo, encontre as pistas e descubra a chave para sair.', {
-                fontSize: '18px',
-                fontFamily: 'Georgia, serif',
-                fontStyle: 'italic',
-                color: '#111111',
-                align: 'center',
-                wordWrap: { width: 250 },
-                lineSpacing: 6,
-            }).setOrigin(0.5);
-            
+
+        const balao = this.add.image(0, 0, 'balao').setOrigin(0.5).setScale(0.95);
+        const balaoTexto = this.add.text(0, -20, 'Quem não questiona o caminho acaba trancado nele.\n\nA saída existe… jogue para descobrir.', {
+            fontSize: '34px',
+            fontFamily: '"Shadows Into Light", cursive',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 250 },
+            lineSpacing: -10,
+        }).setOrigin(0.5);
+
         // container do balão -> balão + frase
-        const balaoGroup = this.add.container((width / 2) + 50, (height / 2) - 150, [balao, balaoTexto])
+        const balaoGroup = this.add.container((width / 2) - 70, (height / 2) - 200, [balao, balaoTexto])
             .setAlpha(0);
+
+        this.add.image((width / 2) + 100, height - 310, 'rosa-ilustra')
+            .setOrigin(0.5, 0.5)
+            .setScale(0.9);
 
         // surge com delay e flutua em loop
         this.tweens.add({
-            targets:  balaoGroup,
-            alpha:    1,
+            targets: balaoGroup,
+            alpha: 1,
             duration: 600,
-            delay:    300,
-            ease:     'Sine.easeOut',
+            delay: 300,
+            ease: 'Sine.easeOut',
             onComplete: () => {
                 this.tweens.add({
-                    targets:   balaoGroup,
-                    y:         balaoGroup.y - 10,
-                    duration:  1800,
-                    ease:      'Sine.easeInOut',
-                    yoyo:      true,
-                    repeat:    -1,
+                    targets: balaoGroup,
+                    y: balaoGroup.y - 10,
+                    duration: 1800,
+                    ease: 'Sine.easeInOut',
+                    yoyo: true,
+                    repeat: -1,
                 });
             },
         });
@@ -53,13 +54,9 @@ export class MainMenu extends Phaser.Scene {
         // }).setOrigin(0.5);
 
         // botão jogar
-        this.add.text(width / 2, height / 2 + 365, 'JOGAR', {
-            fontSize: '28px',
-            fontFamily: 'sans-serif',
-            color: '#e5e7db',
-            backgroundColor: '#e03420',
-            padding: { x: 24, y: 12 }
-        }).setOrigin(0.5)
+        this.add.image(width / 2, height / 2 + 365, 'botao-jogar')
+            .setOrigin(0.5)
+            .setScale(0.9)
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', () => this.scene.start('Game'));
     }

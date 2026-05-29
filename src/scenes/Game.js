@@ -4,7 +4,7 @@
 // ccc6ba - > cinza claro
 // 9a8f7b -> cinza escuro
 
-const DEBUG = true;
+const DEBUG = false;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
@@ -103,8 +103,8 @@ export class Game extends Phaser.Scene {
         //  Rectangle — coords na imagem bruta (265×790)
         this.casaco.on('pointerdown', () => this.onCasacoTap());
 
-        this.folhaCasaco = this.add.image(0, -120, 'folha-casaco')
-            .setOrigin(0.5).setScale(0.22).setAlpha(0).setVisible(false);
+        this.folhaCasaco = this.add.image(5, -20, 'pista-casaco')
+            .setOrigin(0.5).setScale(0.5).setVisible(false);
 
         this.bolso = this.add.image(0, 0, 'bolso')
             .setOrigin(0.5);
@@ -154,7 +154,7 @@ export class Game extends Phaser.Scene {
         // ── Sala 2 — Estante ─────────────────────────────────
         const vaso = this.add.image(0, 0, 'vaso').setOrigin(0.5).setScale(0.7);
 
-        this.plantaVaso = this.add.image(0, -15, 'planta-vaso')
+        this.plantaVaso = this.add.image(-10, -13, 'planta-vaso')
             .setOrigin(0.5, 1)
             .setScale(0.7);
 
@@ -312,11 +312,12 @@ export class Game extends Phaser.Scene {
         if (this.state.pocketOpen) return;
         this.state.pocketOpen = true;
 
-        this.folhaCasaco.setVisible(true);
+        this.folhaCasaco.setVisible(true).setY(-20);
         this.tweens.add({
             targets: this.folhaCasaco,
-            alpha: 1,
-            duration: 300,
+            y: -40,
+            duration: 400,
+            ease: 'Power2.Out',
             onComplete: () => {
                 this.folhaCasaco
                     .setInteractive()
@@ -344,13 +345,13 @@ export class Game extends Phaser.Scene {
         this.plantaShaking = true;
         this.tweens.add({
             targets: this.plantaVaso,
-            angle: 6,
-            duration: 200,
-            ease: 'Sine.InOut',
+            x: '+=5',
+            duration: 120,
+            ease: 'Linear',
             yoyo: true,
             repeat: 3,
             onComplete: () => {
-                this.plantaVaso.setAngle(0);
+                this.plantaVaso.setX(-10);
                 this.plantaShaking = false;
             },
         });
@@ -361,11 +362,11 @@ export class Game extends Phaser.Scene {
         this.flamulaSwinging = true;
         this.tweens.add({
             targets: this.flamula,
-            angle: 7,
-            duration: 450,
+            angle: 10,
+            duration: 750,
             ease: 'Sine.InOut',
             yoyo: true,
-            repeat: 2,
+            repeat: 1,
             onComplete: () => {
                 this.flamula.setAngle(0);
                 this.flamulaSwinging = false;
@@ -448,8 +449,8 @@ export class Game extends Phaser.Scene {
             .setScrollFactor(0).setVisible(false).setDepth(21);
 
         this.endBtn = this.add.text(cx, cy + 160, 'Conheça o legado revolucionário de Rosa Luxemburgo ▶', {
-            fontSize: '20px',
-            fontFamily: 'sans-serif',
+            fontSize: '23px',
+            fontFamily: '"Shadows Into Light", cursive',
             color: '#e5e7db',
             backgroundColor: '#e03420',
             padding: { x: 24, y: 12 },
@@ -484,8 +485,8 @@ export class Game extends Phaser.Scene {
             .setScrollFactor(0).setVisible(false).setDepth(11);
 
         this.bookPopupQuote = this.add.text(cx - halfPage + 25, cy - 30, '', {
-            fontSize: '17px',
-            fontFamily: 'Georgia, serif',
+            fontSize: '23px',
+            fontFamily: '"Shadows Into Light", cursive',
             fontStyle: 'italic',
             color: '#2c1810',
             align: 'center',
@@ -494,8 +495,8 @@ export class Game extends Phaser.Scene {
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
         this.bookPopupInstruction = this.add.text(cx - halfPage + 25, cy + 80, '', {
-            fontSize: '16px',
-            fontFamily: 'sans-serif',
+            fontSize: '19px',
+            fontFamily: '"Shadows Into Light", cursive',
             color: '#5a4a3a',
             align: 'center',
             wordWrap: { width: bookW / 2 - 100 },
@@ -509,8 +510,8 @@ export class Game extends Phaser.Scene {
             .on('pointerdown', () => this.onPopupChaveTap());
 
         this.bookPopupClose = this.add.text(cx + bookW / 2 - 20, cy - 155, '✕', {
-            fontSize: '22px',
-            fontFamily: 'sans-serif',
+            fontSize: '25px',
+            fontFamily: '"Shadows Into Light", cursive',
             color: '#5a4a3a',
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
         this.bookPopupClose.setInteractive(
@@ -559,23 +560,23 @@ export class Game extends Phaser.Scene {
         this.popupOverlay = this.add.rectangle(cx, cy, width, height, 0x000000, 0.75)
             .setScrollFactor(0).setVisible(false).setDepth(10);
 
-        this.popupBox = this.add.image(cx, cy, 'papel-tex')
+        this.popupBox = this.add.image(cx, cy, 'papel-popup')
             .setDisplaySize(width - 60, 340)
             .setScrollFactor(0).setVisible(false).setDepth(11);
 
         this.popupQuote = this.add.text(cx, cy - 70, '', {
-            fontSize: '20px',
-            fontFamily: 'Georgia, serif',
+            fontSize: '23px',
+            fontFamily: '"Shadows Into Light", cursive',
             fontStyle: 'italic',
             color: '#2c1810',
             align: 'center',
             wordWrap: { width: width - 100 },
-            lineSpacing: 10,
+            // lineSpacing: 10,
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
 
         this.popupInstruction = this.add.text(cx, cy + 60, '', {
-            fontSize: '18px',
-            fontFamily: 'sans-serif',
+            fontSize: '21px',
+            fontFamily: '"Shadows Into Light", cursive',
             color: '#5a4a3a',
             align: 'center',
             wordWrap: { width: width - 120 },
@@ -590,8 +591,8 @@ export class Game extends Phaser.Scene {
             .on('pointerdown', () => this.onPopupChaveTap());
 
         this.popupClose = this.add.text(width - 60, cy - 140, '✕', {
-            fontSize: '24px',
-            fontFamily: 'sans-serif',
+            fontSize: '27px',
+            fontFamily: '"Shadows Into Light", cursive',
             color: '#5a4a3a',
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
         this.popupClose.setInteractive(

@@ -1,3 +1,5 @@
+import WebFont from 'webfontloader';
+
 export class Preload extends Phaser.Scene {
     constructor() {
         super('Preload');
@@ -19,21 +21,21 @@ export class Preload extends Phaser.Scene {
         this.load.image('casaco',        'assets/casaco.webp');
         this.load.image('cabideiro',     'assets/cabideiro.webp');
         this.load.image('bolso',         'assets/bolso.webp');
-        this.load.image('folha-casaco',  'assets/folha-casaco.webp');
+        this.load.image('pista-casaco',  'assets/pista-casaco.webp');
         this.load.image('mesa',          'assets/mesa.webp');
         this.load.image('folha-maquina', 'assets/folha-maquina.webp');
         this.load.image('estante',       'assets/estante.webp');
         this.load.image('livro',        'assets/livro.webp');
         this.load.image('livro-lapis',          'assets/livro-lapis.webp');
         this.load.image('seta',          'assets/seta.png');
-        this.load.image('rosa-ilustra',  'assets/rosa-ilustra.png');
-        this.load.image('balao',         'assets/balao.png');
+        this.load.image('rosa-ilustra',  'assets/rosa.webp');
+        this.load.image('balao',         'assets/balao.webp');
         this.load.image('chave',         'assets/chave.webp');
         this.load.image('porta-aberta',  'assets/porta-aberta2.png');
         this.load.image('fundo',         'assets/fundo.webp');
         this.load.image('logo',          'assets/logo.webp');
-        this.load.image('papel-tex',     'assets/papel-tex.webp');
-        this.load.image('pista-globo',   'assets/pista-globo.webp');
+        this.load.image('papel-popup',     'assets/papel-popup.webp');
+        this.load.image('pista-globo',   'assets/pista-globo2.webp');
         this.load.image('livro-aberto',  'assets/livro-aberto.webp');
         this.load.image('poster',  'assets/poster.webp');
         this.load.image('globo',         'assets/globo.webp');
@@ -41,6 +43,7 @@ export class Preload extends Phaser.Scene {
         this.load.image('vaso',         'assets/vaso-pt-1.webp');
         this.load.image('planta-vaso',         'assets/vaso-pt-2.webp');
         this.load.image('flamula',            'assets/flamula.webp');
+        this.load.image('botao-jogar',        'assets/botao-jogar.webp');
         
 
         this.load.audio('paper',         'assets/audio/paper.m4a');
@@ -50,6 +53,10 @@ export class Preload extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start('MainMenu');
+        WebFont.load({
+            google: { families: ['Shadows Into Light'] },
+            active:   () => this.scene.start('MainMenu'),
+            inactive: () => this.scene.start('MainMenu'),
+        });
     }
 }
