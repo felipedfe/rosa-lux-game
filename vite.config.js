@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
-export default defineConfig({
-    base: './',
+export default defineConfig(({ mode }) => ({
+    base: mode === 'locaweb' ? '/jogo-rosa-lux/' : './',
     build: {
         outDir: 'dist',
         assetsDir: 'assets',
@@ -17,4 +17,4 @@ export default defineConfig({
         host: true, // expose para acesso via celular na mesma rede
         port: 5173
     }
-});
+}));

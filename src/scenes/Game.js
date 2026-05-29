@@ -4,7 +4,7 @@
 // ccc6ba - > cinza claro
 // 9a8f7b -> cinza escuro
 
-const DEBUG = false;
+const DEBUG = true;
 
 const ROOM_WIDTH = 540;
 const ROOM_HEIGHT = 960;
@@ -127,7 +127,19 @@ export class Game extends Phaser.Scene {
         ]).setVisible(false); // revelado após ler o papel do globo @aqui
 
         // ── Sala 1 — Mesa + Globo ────────────────────────────
-        this.add.image(R1 + cx, 710, 'mesa').setOrigin(0.5).setScale(0.78);
+        // gaveta — hitbox em coords da imagem (689×506), contando do canto superior esquerdo
+        this.mesa = this.add.image(R1 + cx, 710, 'mesa')
+            .setOrigin(0.5).setScale(0.78)
+            .setInteractive(new Phaser.Geom.Rectangle(255, 170, 275, 90), Phaser.Geom.Rectangle.Contains);
+        this.mesa.on('pointerdown', () => this.onGavetaTap());
+
+        // mosca — começa escondida na posição da gaveta
+        this.mosca = this.add.image(894, 676, 'mosca')
+            .setOrigin(0.5).setScale(1).setVisible(false);
+
+        if (DEBUG) {
+            this.input.enableDebug(this.mesa);
+        }
         this.add.image(R1 + cx - 80, 230, 'poster').setOrigin(0.5).setScale(0.8);
 
         this.add.image(R1 + cx + 50, 170, 'poster-foice').setOrigin(0).setScale(0.7);
@@ -370,6 +382,64 @@ export class Game extends Phaser.Scene {
             'Há mais pensamentos a descobrir.'
         );
         this.unlockLivro();
+    }
+
+    onGavetaTap() {
+        this.mesa.setTexture('mesa-aberta');
+        this.mesa.disableInteractive();
+        this.sound.play('som-gaveta');
+
+        this.mosca.setVisible(true);
+
+        // batida de asas — scaleX rápido
+        const flapTween = this.tweens.add({
+            targets: this.mosca,
+            scaleX: 0.15,
+            duration: 35,
+            yoyo: true,
+            repeat: -1,
+        });
+
+        // ângulo oscilante — voo irregular
+        const angleTween = this.tweens.add({
+            targets: this.mosca,
+            angle: 12,
+            duration: 90,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut',
+        });
+
+        // trajetória ziguezague saindo pela direita
+        const steps = [
+            { x: 868, y: 638, dur: 120 },
+            { x: 924, y: 606, dur: 90  },
+            { x: 882, y: 558, dur: 110 },
+            { x: 956, y: 526, dur: 85  },
+            { x: 908, y: 478, dur: 100 },
+            { x: 994, y: 448, dur: 130 },
+            { x: 962, y: 390, dur: 95  },
+            { x: 1055, y: 355, dur: 150 },
+            { x: 1110, y: 295, dur: 130 },
+        ];
+
+        const flyStep = (i) => {
+            if (i >= steps.length) {
+                flapTween.stop();
+                angleTween.stop();
+                this.mosca.setVisible(false);
+                return;
+            }
+            this.tweens.add({
+                targets: this.mosca,
+                x: steps[i].x,
+                y: steps[i].y,
+                duration: steps[i].dur,
+                ease: 'Sine.InOut',
+                onComplete: () => flyStep(i + 1),
+            });
+        };
+        flyStep(0);
     }
 
     onQuadroTap() {
