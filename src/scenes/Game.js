@@ -640,7 +640,7 @@ export class Game extends Phaser.Scene {
         this.popupClose = this.add.text(width - 60, cy - 140, '✕', {
             fontSize: '27px',
             fontFamily: '"Shadows Into Light", cursive',
-            color: '#5a4a3a',
+            color: '#2c1810',
         }).setOrigin(0.5).setScrollFactor(0).setVisible(false).setDepth(12);
         this.popupClose.setInteractive(
             new Phaser.Geom.Rectangle(-15, -15, 65, 65),
