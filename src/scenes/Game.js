@@ -66,12 +66,17 @@ export class Game extends Phaser.Scene {
             .setOrigin(0.5)
             .setScale(0.85);
 
+
         this.portaRodape = this.add.image(80, 430, 'porta-rodape')
             .setOrigin(0.5, 1)
             .setScale(0.85);
 
+        this.portaRodapeParte = this.add.image(-722, 408 , 'porta-rodape-parte')
+            .setOrigin(0, 0);
+
         this.portaGroup = this.add.container(R0 + cx - 90, 375, [
             this.portaRodape,
+            this.portaRodapeParte,
             this.porta,
         ]);
 
@@ -433,7 +438,11 @@ export class Game extends Phaser.Scene {
         this.sound.play('porta-abre');
         this.porta.setTexture('porta-aberta');
 
-        this.cameras.main.pan(this.portaGroup.x, this.portaGroup.y, 900, 'Power2', false, (_cam, progress) => {
+        const doorX = this.portaGroup.x + this.porta.x;
+        const doorY = this.portaGroup.y + this.porta.y;
+        // remove bounds para que o pan possa centralizar na porta sem ser bloqueado pela borda
+        this.cameras.main.removeBounds();
+        this.cameras.main.pan(doorX, doorY, 900, 'Power2', false, (_cam, progress) => {
             if (progress !== 1) return;
             this.cameras.main.zoomTo(3, 2500, 'Power3', false, (_cam2, p2) => {
                 if (p2 >= 0.3) this.showEndScreen();

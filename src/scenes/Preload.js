@@ -18,6 +18,7 @@ export class Preload extends Phaser.Scene {
 
         this.load.image('porta',         'assets/porta.webp');
         this.load.image('porta-rodape',  'assets/porta-rodape-2.webp');
+        this.load.image('porta-rodape-parte',  'assets/porta-rodape-parte.webp');
         this.load.image('casaco',        'assets/casaco.webp');
         this.load.image('cabideiro',     'assets/cabideiro.webp');
         this.load.image('bolso',         'assets/bolso.webp');
