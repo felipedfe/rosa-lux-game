@@ -122,7 +122,7 @@ export class Game extends Phaser.Scene {
         this.casacoGroup = this.add.container(R0 + cx + 130, 415, [
             this.casaco,
             this.bolsoGroup,
-        ]).setVisible(true); // revelado após ler o papel do globo @aqui
+        ]).setVisible(false); // revelado após ler o papel do globo @aqui
 
         // ── Sala 1 — Mesa + Globo ────────────────────────────
         this.add.image(R1 + cx, 710, 'mesa').setOrigin(0.5).setScale(0.78);
@@ -172,7 +172,7 @@ export class Game extends Phaser.Scene {
         this.livro = this.add.image(90, + 120, 'livro')
             .setOrigin(0.5)
             .setScale(0.55)
-            .setVisible(true) // revelado após ler o bilhete do casaco @aqui
+            .setVisible(false) // revelado após ler o bilhete do casaco @aqui
             .setInteractive(new Phaser.Geom.Rectangle(-25, -25, 100, 270), Phaser.Geom.Rectangle.Contains);
         this.livro.on('pointerdown', () => this.onLivroTap());
 
