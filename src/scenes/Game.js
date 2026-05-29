@@ -62,15 +62,24 @@ export class Game extends Phaser.Scene {
 
         // ── Sala 0 — Porta + Casaco ──────────────────────────
 
-        this.porta = this.add.image(R0 + cx + 80, 530, 'porta')
+        this.porta = this.add.image(-10, 120, 'porta')
             .setOrigin(0.5)
-            .setScale(0.65);
+            .setScale(0.85);
+
+        this.portaRodape = this.add.image(80, 430, 'porta-rodape')
+            .setOrigin(0.5, 1)
+            .setScale(0.85);
+
+        this.portaGroup = this.add.container(R0 + cx - 90, 375, [
+            this.portaRodape,
+            this.porta,
+        ]);
 
         // maçanetas — zonas horizontais sobre a porta, sempre interativas
         // ajuste x/y/w/h com DEBUG=true para encaixar nas maçanetas da imagem
-        this.macanetaEsq = this.add.zone(R0 + cx - 40, 570, 60, 60).setInteractive();
-        this.macanetaMeio = this.add.zone(R0 + cx + 80, 570, 60, 60).setInteractive();
-        this.macanetaDir = this.add.zone(R0 + cx + 200, 570, 60, 60).setInteractive();
+        this.macanetaEsq = this.add.zone(R0 + cx - 195, 500, 60, 80).setInteractive();
+        this.macanetaMeio = this.add.zone(R0 + cx - 100, 500, 60, 80).setInteractive();
+        this.macanetaDir = this.add.zone(R0 + cx - 5, 500, 60, 80).setInteractive();
 
         this.macanetaEsq.on('pointerdown', () => {
             if (this.state.chaveObtida) this.onPortaTap();
@@ -85,39 +94,39 @@ export class Game extends Phaser.Scene {
             this.input.enableDebug(this.macanetaDir);
         }
 
-        this.add.image(R0 + cx - 160, 580, 'cabideiro').setOrigin(0.5).setScale(0.8);
+        this.add.image(R0 + cx + 150, 190, 'cabideiro').setOrigin(0.5).setScale(0.8);
 
         this.casaco = this.add.image(0, 0, 'casaco')
             .setOrigin(0.5)
             .setScale(0.9)
-            .setInteractive(new Phaser.Geom.Rectangle(0, 0, 210, 790), Phaser.Geom.Rectangle.Contains);
+            .setInteractive(new Phaser.Geom.Rectangle(30, 0, 170, 510), Phaser.Geom.Rectangle.Contains);
         //  Rectangle — coords na imagem bruta (265×790)
         this.casaco.on('pointerdown', () => this.onCasacoTap());
 
-        this.bolso = this.add.image(0, 0, 'bolso')
-            .setOrigin(0.5).setAlpha(0).setVisible(false);
-
         this.folhaCasaco = this.add.image(0, -120, 'folha-casaco')
-            .setOrigin(0.5).setScale(0.9).setAlpha(0).setVisible(false);
+            .setOrigin(0.5).setScale(0.22).setAlpha(0).setVisible(false);
 
-        this.bolsoGroup = this.add.container(15, 200, [
+        this.bolso = this.add.image(0, 0, 'bolso')
+            .setOrigin(0.5);
+
+        this.bolsoGroup = this.add.container(- 9, 130, [
             this.folhaCasaco,
             this.bolso,
         ]).setScale(0.9);
 
-        this.casacoGroup = this.add.container(R0 + cx - 160, 580, [
+        this.casacoGroup = this.add.container(R0 + cx + 130, 415, [
             this.casaco,
             this.bolsoGroup,
-        ]).setVisible(false); // revelado após ler o papel do globo
+        ]).setVisible(true); // revelado após ler o papel do globo @aqui
 
         // ── Sala 1 — Mesa + Globo ────────────────────────────
         this.add.image(R1 + cx, 710, 'mesa').setOrigin(0.5).setScale(0.78);
-        this.add.image(R1 + cx + 90, 230, 'poster').setOrigin(0.5).setScale(0.8);
+        this.add.image(R1 + cx - 80, 230, 'poster').setOrigin(0.5).setScale(0.8);
 
-        this.add.image(R1 + 20, 40, 'poster-foice').setOrigin(0).setScale(0.7);
+        this.add.image(R1 + cx + 50, 170, 'poster-foice').setOrigin(0).setScale(0.7);
 
-        // vaso
-        this.add.image(R1 + cx + 140, 500, 'livro-lapis').setOrigin(0.5).setScale(0.7);
+        // livro lãpis
+        // this.add.image(R1 + cx + 10, 600, 'livro-lapis').setOrigin(0.5).setScale(0.7);
 
         // folhaGlobo — pista, fica atrás do globo no container (ordem importa)
         this.folhaGlobo = this.add.image(0, 90, 'pista-globo')
@@ -130,24 +139,35 @@ export class Game extends Phaser.Scene {
             .setOrigin(0.5)
             .setScale(0.7)
             .setInteractive();
-            // .setInteractive({ pixelPerfect: true });
+        // .setInteractive({ pixelPerfect: true });
         this.globo.on('pointerdown', () => this.onGloboTap());
 
         // container — mover globoGroup reposiciona globo e pista juntos
-        this.globoGroup = this.add.container(R1 + cx - 100, 480, [
+        this.globoGroup = this.add.container(R1 + cx + 120, 480, [
             this.folhaGlobo,
             this.globo,
         ]);
 
+        // livro lãpis
+        this.add.image(R1 + cx + 10, 600, 'livro-lapis').setOrigin(0.5).setScale(0.7);
+
         // ── Sala 2 — Estante ─────────────────────────────────
-        this.add.image(R2 + cx + 120, 70, 'vaso').setOrigin(0.5).setScale(0.7);
+        const vaso = this.add.image(0, 0, 'vaso').setOrigin(0.5).setScale(0.7);
+
+        this.plantaVaso = this.add.image(0, -15, 'planta-vaso')
+            .setOrigin(0.5, 1)
+            .setScale(0.7);
+
+        this.vasoGroup = this.add.container(R2 + cx - 80, 180, [vaso, this.plantaVaso])
+            .setInteractive(new Phaser.Geom.Rectangle(-60, -130, 120, 200), Phaser.Geom.Rectangle.Contains)
+            .on('pointerdown', () => this.onPlantaTap());
 
         this.estante = this.add.image(0, 0, 'estante').setOrigin(0.5).setScale(0.9);
 
-        this.livro = this.add.image(140, -235, 'livro')
+        this.livro = this.add.image(90, + 120, 'livro')
             .setOrigin(0.5)
-            .setScale(0.7)
-            .setVisible(false) // revelado após ler o bilhete do casaco
+            .setScale(0.55)
+            .setVisible(true) // revelado após ler o bilhete do casaco @aqui
             .setInteractive();
         this.livro.on('pointerdown', () => this.onLivroTap());
 
@@ -156,7 +176,12 @@ export class Game extends Phaser.Scene {
             this.livro,
         ]);
 
-        this.add.image(R2 + ROOM_WIDTH - 100, 0, 'flamula').setOrigin(0, 0).setScale(0.9);
+        this.flamula = this.add.image(R2 + cx - 3, 400, 'flamula')
+            .setOrigin(0.5, 0)
+            .setScale(0.9)
+            .setInteractive()
+            .on('pointerdown', () => this.onFlamulaSwing());
+        this.add.circle(R2 + cx - 3, 400, 7, 0x000000);
 
         if (DEBUG) {
             this.input.enableDebug(this.globo);
@@ -175,7 +200,7 @@ export class Game extends Phaser.Scene {
         this.arrowLeft = this.add.image(30, y, 'seta')
             // .setOrigin(0.5)
             .setScale(0.45)
-            .setFlipX(true) 
+            .setFlipX(true)
             .setScrollFactor(0)
             .setDepth(5)
             .setInteractive(new Phaser.Geom.Rectangle(-10, -30, 110, 150), Phaser.Geom.Rectangle.Contains)
@@ -252,7 +277,7 @@ export class Game extends Phaser.Scene {
 
         this.tweens.add({
             targets: this.globo,
-            x: '+=130',
+            x: '-=130',
             duration: 500,
             ease: 'Power2',
         });
@@ -287,25 +312,17 @@ export class Game extends Phaser.Scene {
         if (this.state.pocketOpen) return;
         this.state.pocketOpen = true;
 
-        this.bolso.setVisible(true);
+        this.folhaCasaco.setVisible(true);
         this.tweens.add({
-            targets: this.bolso,
+            targets: this.folhaCasaco,
             alpha: 1,
-            duration: 400,
+            duration: 300,
             onComplete: () => {
-                this.folhaCasaco.setVisible(true);
-                this.tweens.add({
-                    targets: this.folhaCasaco,
-                    alpha: 1,
-                    duration: 300,
-                    onComplete: () => {
-                        this.folhaCasaco
-                            .setInteractive()
-                            .on('pointerdown', () => this.onBilheteTap());
-                        this.folhaCasacoGlow = this.addPersistentGlow(this.folhaCasaco);
-                        if (DEBUG) this.input.enableDebug(this.folhaCasaco);
-                    }
-                });
+                this.folhaCasaco
+                    .setInteractive()
+                    .on('pointerdown', () => this.onBilheteTap());
+                this.folhaCasacoGlow = this.addPersistentGlow(this.folhaCasaco);
+                if (DEBUG) this.input.enableDebug(this.folhaCasaco);
             }
         });
     }
@@ -322,13 +339,47 @@ export class Game extends Phaser.Scene {
         this.unlockLivro();
     }
 
+    onPlantaTap() {
+        if (this.plantaShaking) return;
+        this.plantaShaking = true;
+        this.tweens.add({
+            targets: this.plantaVaso,
+            angle: 6,
+            duration: 200,
+            ease: 'Sine.InOut',
+            yoyo: true,
+            repeat: 3,
+            onComplete: () => {
+                this.plantaVaso.setAngle(0);
+                this.plantaShaking = false;
+            },
+        });
+    }
+
+    onFlamulaSwing() {
+        if (this.flamulaSwinging) return;
+        this.flamulaSwinging = true;
+        this.tweens.add({
+            targets: this.flamula,
+            angle: 7,
+            duration: 450,
+            ease: 'Sine.InOut',
+            yoyo: true,
+            repeat: 2,
+            onComplete: () => {
+                this.flamula.setAngle(0);
+                this.flamulaSwinging = false;
+            },
+        });
+    }
+
     onLivroTap() {
         this.showBookPopup('"Mover-se com quem pensa diferente\npara impedir a barbárie."');
     }
 
     onMacanetaErradaTap() {
         this.tweens.add({
-            targets: this.porta,
+            targets: this.portaGroup,
             x: '+=3',
             duration: 30,
             yoyo: true,
@@ -343,7 +394,7 @@ export class Game extends Phaser.Scene {
         this.sound.play('porta-abre');
         this.porta.setTexture('porta-aberta');
 
-        this.cameras.main.pan(this.porta.x, this.porta.y, 900, 'Power2', false, (_cam, progress) => {
+        this.cameras.main.pan(this.portaGroup.x, this.portaGroup.y, 900, 'Power2', false, (_cam, progress) => {
             if (progress !== 1) return;
             this.cameras.main.zoomTo(3, 2500, 'Power3', false, (_cam2, p2) => {
                 if (p2 >= 0.3) this.showEndScreen();
