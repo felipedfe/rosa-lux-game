@@ -6,6 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="color-scheme" content="light" />
     <title>Jogo Rosa Lux</title>
     <style>
         * {
@@ -29,6 +30,19 @@
 
         canvas {
             display: block;
+            filter: none !important;
+            -webkit-filter: none !important;
+            mix-blend-mode: normal !important;
+            isolation: isolate;
+        }
+
+        :root {
+            color-scheme: light only;
+        }
+
+        html, body, #game-container {
+            filter: none !important;
+            -webkit-filter: none !important;
         }
     </style>
 </head>

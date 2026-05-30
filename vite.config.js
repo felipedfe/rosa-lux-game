@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig(({ mode }) => ({
-    base: mode === 'locaweb' ? '/jogo-rosa-lux/' : './',
+    base: mode === 'locaweb' ? '/rosa-lux/' : './',
     build: {
         outDir: 'dist',
         assetsDir: 'assets',
