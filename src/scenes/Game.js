@@ -1,4 +1,4 @@
-// paleta de cores, além de preto e branco:
+// paleta de cores além de preto e branco:
 // f4efe6 -> bege
 // e8442f -> vermelho
 // ccc6ba - > cinza claro
