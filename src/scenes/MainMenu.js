@@ -9,12 +9,12 @@ export class MainMenu extends Phaser.Scene {
 
 
         const balao = this.add.image(0, 0, 'balao').setOrigin(0.5).setScale(0.95);
-        const balaoTexto = this.add.text(0, -20, 'Quem não questiona o caminho acaba trancado nele.\n\nA saída existe… jogue para descobrir.', {
+        const balaoTexto = this.add.text(0, -20, "Those who don't question the path end up trapped in it.\n\nThe way out exists… play to find it.", {
             fontSize: '34px',
             fontFamily: '"Shadows Into Light", cursive',
             color: '#ffffff',
             align: 'center',
-            wordWrap: { width: 250 },
+            wordWrap: { width: 240 },
             lineSpacing: -10,
         }).setOrigin(0.5);
 

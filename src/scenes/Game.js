@@ -345,8 +345,8 @@ export class Game extends Phaser.Scene {
             this.folhaGloboGlow = null;
         }
         this.showPopup(
-            '"A barbárie não chega vestida\nde monstro. Às vezes chega como\nmercado, ordem, pátria e guerra."',
-            'Se for sair, leve um casaco.'
+            '"Barbarism does not arrive dressed\nas a monster. Sometimes it arrives as\nmarket, order, fatherland, and war."',
+            'If you go out, take a coat.'
         );
         this.unlockCasaco();
     }
@@ -378,8 +378,8 @@ export class Game extends Phaser.Scene {
             this.folhaCasacoGlow = null;
         }
         this.showPopup(
-            '"Liberdade é sempre a liberdade\nde quem pensa diferente."',
-            'Há mais pensamentos a descobrir.'
+            '"Freedom is always the freedom\nof the one who thinks differently."',
+            'There are more thoughts to discover.'
         );
         this.unlockLivro();
     }
@@ -494,7 +494,7 @@ export class Game extends Phaser.Scene {
     }
 
     onLivroTap() {
-        this.showBookPopup('"Mover-se com quem pensa diferente\npara impedir a barbárie."');
+        this.showBookPopup('"Move alongside those who think differently\nto stop barbarism."');
     }
 
     onMacanetaErradaTap() {
@@ -564,14 +564,14 @@ export class Game extends Phaser.Scene {
         const cx = width / 2;
         const cy = height / 2;
 
-        this.endOverlay = this.add.rectangle(cx, cy, width, height, 0x18417d, 1)
+        this.endOverlay = this.add.rectangle(cx, cy, width, height, 0x000000, 1)
             .setScrollFactor(0).setVisible(false).setDepth(20);
 
         this.endLogo = this.add.image(cx, cy - 60, 'logo')
             .setOrigin(0.5)
-            .setScrollFactor(0).setVisible(false).setDepth(21).setScale(0.9);
+            .setScrollFactor(0).setVisible(false).setDepth(21).setScale(0.5);
 
-        this.endBtn = this.add.text(cx, cy + 160, 'Conheça o legado revolucionário de Rosa Luxemburgo ▶', {
+        this.endBtn = this.add.text(cx, cy + 160, 'Discover Rosa Luxemburg\'s revolutionary legacy ▶', {
             fontSize: '27px',
             fontFamily: '"Shadows Into Light", cursive',
             color: '#e5e7db',
@@ -831,8 +831,8 @@ export class Game extends Phaser.Scene {
             onComplete: () => this.bookPopupChave.setVisible(false),
         });
 
-        this.bookPopupQuote.setText('Você encontrou a chave!');
-        this.bookPopupInstruction.setText('Volte até a porta.').setVisible(false);
+        this.bookPopupQuote.setText('You found the key!');
+        this.bookPopupInstruction.setText('Go back to the door.').setVisible(false);
 
     }
 }

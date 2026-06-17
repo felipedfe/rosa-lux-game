@@ -15,6 +15,6 @@ export default defineConfig(({ mode }) => ({
     },
     server: {
         host: true, // expose para acesso via celular na mesma rede
-        port: 5173
+        port: 5174
     }
 }));

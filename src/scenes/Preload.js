@@ -35,18 +35,18 @@ export class Preload extends Phaser.Scene {
         this.load.image('braco-dir',     'assets/braco-dir.webp');
         this.load.image('balao',         'assets/balao.webp');
         this.load.image('chave',         'assets/chave.webp');
-        this.load.image('porta-aberta',  'assets/porta-aberta4.png');
-        this.load.image('logo',          'assets/logo2.webp');
+        this.load.image('porta-aberta',  'assets/porta-aberta3.png');
+        this.load.image('logo',          'assets/logo-rosalux-red.png');
         this.load.image('papel-popup',     'assets/papel-popup.webp');
         this.load.image('pista-globo',   'assets/pista-globo2.webp');
         this.load.image('livro-aberto',  'assets/livro-aberto.webp');
-        this.load.image('poster',  'assets/poster.webp');
+        this.load.image('poster',  'assets/poster-en-2.webp');
         this.load.image('globo',         'assets/globo.webp');
         this.load.image('poster-foice',          'assets/poster-pequeno.png');
         this.load.image('vaso',         'assets/vaso-pt-1.webp');
         this.load.image('planta-vaso',         'assets/vaso-pt-2.webp');
         this.load.image('flamula',            'assets/flamula.webp');
-        this.load.image('botao-jogar',        'assets/botao-jogar.webp');
+        this.load.image('botao-jogar',        'assets/botao-jogar-en.png');
         this.load.image('oculos',             'assets/oculos2.webp');
         
 
